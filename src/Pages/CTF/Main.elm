@@ -1,4 +1,4 @@
-module Pages.CTF exposing (Model, init, main)
+module Pages.CTF.Main exposing (Model, init, main, getElem)
 
 import Browser
 import Html exposing (..)
@@ -26,6 +26,7 @@ type alias Model =
     { flags : List Flag
     , expanded : Int
     , response : String
+    , player : Player
     }
 
 
@@ -36,14 +37,20 @@ type alias Flag =
     , captured : Bool
     }
 
+type alias Player =
+    {
+        score : Int
+    }
+
 
 init : Model
 init =
-    { flags = [], expanded = 0, response = "" }
+    { flags = [], expanded = 0, response = "" , player = {score = 0}}
 
 
 {-| Create simple flag element
 -}
+flag : String -> String -> Int -> Flag
 flag title descr value =
     Flag title descr value False
 
@@ -58,7 +65,7 @@ type Msg
     = NoOp
     | Expand Int
     | UpdateResponse Int String
-    | SendResponse Int
+    | SendResponse Int Flag
 
 
 update : Msg -> Model -> Model
@@ -70,8 +77,11 @@ update msg m =
         UpdateResponse i st ->
             { m | response = st }
 
-        SendResponse i ->
-            { m | response = "" }
+        SendResponse i f ->
+            let 
+                p = m.player
+            in
+            { m | response = "", player = { p | score = p.score + f.value } }
 
         _ ->
             m
@@ -85,10 +95,18 @@ update msg m =
 
 view : Model -> Html Msg
 view m =
-    div []
-        [ h1 [] [ text "CTF Competition" ]
-        , ulIndexedMap (viewFlag m.response m.expanded) m.flags
-        ]
+    div [] [
+        div []
+            [ h1 [] [ text "CTF Competition" ]
+            , ulIndexedMap (viewFlag m.response m.expanded) m.flags
+            ],
+        div []
+            [ h1 [] [ text (viewScore m) ]
+            ]
+    ]
+viewScore : Model -> String
+viewScore m =
+    String.fromInt(m.player.score)
 
 
 viewFlag : String -> Int -> Int -> Flag -> Html Msg
@@ -103,6 +121,21 @@ viewFlag response expanded i obj =
     in
     div [] (flagTitle i obj :: body)
 
+getElem: Int -> List a -> Maybe a
+getElem index list =                          -- 3 [ 1, 2, 3, 4, 5, 6 ]
+
+   if  (List.length list) >= index then
+
+        List.take index list               -- [ 1, 2, 3 ]
+        |> List.reverse                    -- [ 3, 2, 1 ]
+        |> List.head                       -- Just 3
+   else 
+      Nothing --Stackoverflow
+
+acc: Model -> Int
+acc m =
+    Maybe.withDefault 0 (getElem m.expanded (List.map .value m.flags))
+
 
 flagTitle i obj =
     h2 [ onClick (Expand i) ]
@@ -116,7 +149,7 @@ flagChildren response i obj =
     , div []
         [ text "Answer: "
         , input [ placeholder "42", onInput (UpdateResponse i), value response ] []
-        , button [ onClick (SendResponse i) ] [ text "Send" ]
+        , button [ onClick (SendResponse i obj) ] [ text "Send" ]
         ]
     ]
 
