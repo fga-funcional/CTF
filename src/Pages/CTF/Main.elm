@@ -84,7 +84,7 @@ update msg m =
                     m.player
                 k = m.flags
             in
-            { m | response = "", player = { p | score = p.score + f.value }, flags = updateFlagList k m.expanded}
+            { m | response = "", player = { p | score = p.score + f.value }, flags = (updateFlagList k m.expanded) }
         _ ->
             m
 
@@ -93,7 +93,7 @@ updateFlagList lista indexTo =
     let
         toggle index fla =
             if index == indexTo then
-                {fla | color = "red"}
+                {fla | color = "red", captured = True}
             else
                 { fla | color = fla.color}
     in
@@ -174,8 +174,8 @@ flagChildren response i obj =
     [ p [] [ text obj.description ]
     , div []
         [ text "Answer: "
-        , input [ placeholder "42", onInput (UpdateResponse i), value response ] []
-        , button [ onClick (SendResponse i obj) ] [ text "Send" ]
+        , input [ placeholder "42", onInput (UpdateResponse i), value response, readonly obj.captured ] []
+        , button [ onClick (SendResponse i obj), disabled obj.captured ] [ text "Send" ]
         ]
     ]
 
