@@ -1,4 +1,30 @@
 # elm-package generated files
-elm-stuff
+frontend/elm-stuff
 # elm-repl generated files
-repl-temp-*
+frontend/repl-temp-*
+
+.sass-cache
+frontend/.sass-cache
+
+backend/dist
+backend/dist-*
+backend/cabal-dev
+backend/*.o
+backend/*.hi
+backend/*.chi
+backend/*.chs.h
+backend/*.dyn_o
+backend/*.dyn_hi
+backend/.hpc
+backend/.hsenv
+backend/.cabal-sandbox/
+backend/cabal.sandbox.config
+backend/*.prof
+backend/*.aux
+backend/*.hp
+backend/*.eventlog
+backend/.stack-work/
+backend/cabal.project.local
+backend/cabal.project.local~
+backend/.HTF/
+backend/.ghc.environment.*
