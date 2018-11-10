@@ -1,11 +1,14 @@
-module Pages.CTF.Main exposing (Model, getElem, init, main)
+module Pages.CTF.Main exposing (..)
 
 import Browser
+import Http exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Ui.Icon exposing (..)
 import Utils exposing (..)
+import Json.Decode as D
+import Json.Encode as E
 
 
 main =
@@ -180,6 +183,22 @@ flagChildren response i obj =
     ]
 
 
+----------------------------
+-- Decoders
+----------------------------
+
+flagDecoder : D.Decoder Flag
+flagDecoder =
+    D.map4 flag
+        (D.field "title" D.string)
+        (D.field "description" D.string)
+        (D.field "value" (D.int))
+        (D.field "color" (D.string))
+
+
+
+getFlags =
+  Http.get "http://localhost:3000/flags" (flagDecoder)
 
 --------------------------------------------------------------------------------
 -- EXAMPLES
@@ -195,3 +214,4 @@ example =
             , flag "Factorial" "Blah" 2 "white"
             ]
     }
+

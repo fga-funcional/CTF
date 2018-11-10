@@ -21,5 +21,11 @@ executable ctf
                        scotty, 
                        aeson,
                        text,
-                       unordered-containers
+                       unordered-containers,
+                       persistent,
+                       persistent-template,
+                       persistent-postgresql,
+                       transformers,
+                       monad-logger,
+                       wai-extra
 
