@@ -9,6 +9,13 @@ import Ui.Icon exposing (..)
 import Utils exposing (..)
 import Json.Decode as D
 import Json.Encode as E
+import Bootstrap.ListGroup as ListGroup
+import Bootstrap.Form as Form
+import Bootstrap.Form.Input as Input
+import Bootstrap.Form.Checkbox as Checkbox
+import Bootstrap.Card as Card
+import Bootstrap.Button as Button
+import Bootstrap.CDN as CDN
 
 
 main =
@@ -147,18 +154,28 @@ subscriptions model =
 -- VIEW FUNCTIONS
 --------------------------------------------------------------------------------
 
+flagView : Flag -> Html Msg
+flagView currFlag = 
+    ListGroup.ul [ListGroup.li []
+        [ span []
+            [ b [] [ text "Title: "] 
+            , p [] [text currFlag.title]
+            ]
+        ]
+    ]
 
 view : Model -> Html Msg
 view m =
     div []
-        [ div []
+        [ CDN.stylesheet
+        , div [ class "jumbotron"]
             [ h1 [] [ text "CTF Competition" ]
             , ulIndexedMap (viewFlag m.response m.expanded) m.flags
             ]
         , div []
             [ h1 [] [ text (viewScore m) ]
             ]
-        , button [ onClick (GetFlagsAPI) ] [ text "Get Flags" ]
+        , Button.button [ Button.primary, Button.onClick (GetFlagsAPI) ] [ text "Get Flags" ]
         ]
 
 
@@ -216,7 +233,7 @@ flagChildren response i obj =
     , div []
         [ text "Answer: "
         , input [ placeholder "42", onInput (UpdateResponse i), value response, readonly obj.captured ] []
-        , button [ onClick (SendResponse i obj response), disabled obj.captured ] [ text "Send" ]
+        , Button.button [ Button.secondary, Button.onClick (SendResponse i obj response), Button.disabled obj.captured ] [ text "Send" ]
         ]
     ]
 
