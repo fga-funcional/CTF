@@ -39,6 +39,7 @@ type alias Flag =
     , value : Int
     , title : String
     , captured : Bool
+    , answer : String
     , description : String
     }
 
@@ -53,9 +54,9 @@ init _ =
 
 {-| Create simple flag element
 -}
-flag : String -> Int -> String -> Bool -> String -> Flag
-flag color value title captured descr =
-    Flag color value title False descr
+flag : String -> Int -> String -> Bool -> String -> String -> Flag
+flag color value title captured answer descr =
+    Flag color value title False answer descr
 
 
 
@@ -68,7 +69,7 @@ type Msg
     = NoOp
     | Expand Int
     | UpdateResponse Int String
-    | SendResponse Int Flag
+    | SendResponse Int Flag String
     | GetFlagsAPI 
     | GotFlagsAPI (Result Http.Error (List Flag))
 
@@ -85,7 +86,7 @@ update msg m =
                 Err httpError ->
                     let
                         _ =
-                            Debug.log "FlagError" httpError
+                            "FlagError"
                     in
                         ( m, Cmd.none )
 
@@ -97,28 +98,41 @@ update msg m =
         UpdateResponse i st ->
             ( { m | response = st }, Cmd.none )
 
-        SendResponse i f ->
+        SendResponse i f ans ->
             let
                 p =
                     m.player
                 k = m.flags
             in
-            ( { m | response = "", player = { p | score = p.score + f.value }, flags = (updateFlagList k m.expanded) }, Cmd.none )
+            ( { m | response = "", player = { p | score = p.score + f.value }, flags = (updateFlagList k ans m.expanded) }, Cmd.none )
 
-updateFlagList : List Flag -> Int -> List Flag
-updateFlagList lista indexTo =
+updateFlagList : List Flag -> String -> Int -> List Flag
+updateFlagList lista ans indexTo =
     let
         toggle index fla =
             if index == indexTo then
-                {fla | color = "red", captured = True}
+                let
+                    answ = fla.answer 
+                   
+                    in   
+                        if ans == answ then
+                            {fla | color = "green"}
+                        else    
+                            {fla | color = "red"}
             else
                 { fla | color = fla.color}
     in
         List.indexedMap toggle lista
 
-updateFlag : Flag -> Flag
-updateFlag f = 
-    {f | color = "red"}
+updateFlag : String -> Flag -> Flag
+updateFlag ans f =   
+     let
+      answ = f.answer   
+     in   
+        if ans == answ then
+            {f | color = "green"}
+        else    
+            {f | color = "red"}
 
 
 -- SUBSCRIPTIONS
@@ -202,7 +216,7 @@ flagChildren response i obj =
     , div []
         [ text "Answer: "
         , input [ placeholder "42", onInput (UpdateResponse i), value response, readonly obj.captured ] []
-        , button [ onClick (SendResponse i obj), disabled obj.captured ] [ text "Send" ]
+        , button [ onClick (SendResponse i obj response), disabled obj.captured ] [ text "Send" ]
         ]
     ]
 
@@ -213,11 +227,12 @@ flagChildren response i obj =
 
 flagDecoder : D.Decoder (List Flag)
 flagDecoder =
-    D.list (D.map5 flag
+    D.list (D.map6 flag
         (D.at ["color"] D.string)
         (D.at ["value"] D.int)
         (D.at ["title"] D.string)
         (D.at ["captured"] D.bool)
+        (D.at ["answer"] D.string)
         (D.at ["description"] D.string)
     )
 

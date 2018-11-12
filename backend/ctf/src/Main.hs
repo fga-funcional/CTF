@@ -21,14 +21,15 @@ data Flag = Flag
   , description :: String
   , value :: Int
   , color :: String
+  , answer :: String
   , captured :: Bool
   } deriving (Show, Generic)
 
 
+k= "8320987112741390144276341183223364380754172606361245952449277696409600000000000000"
 flags =
-  [ Flag "Fibonacci" "Try1" 1 "white" False
-    , Flag "Collatz" "Try2" 2 "white" False
-    , Flag "Factorial" "Try55" 2 "white" False
+  [ Flag "Fibonacci" "Qual o quinto número de fibonacci?" 1 "white" "5" False
+    , Flag "Factorial" "Qual fatorial de 60?" 2 "white" k False
   ]
 
 urls = fromList
@@ -49,3 +50,7 @@ main = do
 
     get "/flags" $ do
       json flags
+    
+    post "/flags/:id" $ do
+      json flags
+  
