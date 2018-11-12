@@ -27,5 +27,6 @@ executable ctf
                        persistent-postgresql,
                        transformers,
                        monad-logger,
-                       wai-extra
+                       wai-extra,
+                       wai-cors
 

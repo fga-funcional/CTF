@@ -12,10 +12,11 @@ import Json.Encode as E
 
 
 main =
-    Browser.sandbox
-        { init = example
-        , view = view
+    Browser.element
+        { init = init
         , update = update
+        , view = view
+        , subscriptions = subscriptions
         }
 
 
@@ -34,11 +35,11 @@ type alias Model =
 
 
 type alias Flag =
-    { title : String
-    , description : String
+    { color : String
     , value : Int
-    , color : String
+    , title : String
     , captured : Bool
+    , description : String
     }
 
 
@@ -46,17 +47,15 @@ type alias Player =
     { score : Int
     }
 
-
-init : Model
-init =
-    { flags = [], expanded = 0, response = "", player = { score = 0 } }
-
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( Model [] 0 "" { score = 0 },  Http.send GotFlagsAPI getFlags)
 
 {-| Create simple flag element
 -}
-flag : String -> String -> Int -> String -> Flag
-flag title descr value color =
-    Flag title descr value color False
+flag : String -> Int -> String -> Bool -> String -> Flag
+flag color value title captured descr =
+    Flag color value title False descr
 
 
 
@@ -70,16 +69,33 @@ type Msg
     | Expand Int
     | UpdateResponse Int String
     | SendResponse Int Flag
+    | GetFlagsAPI 
+    | GotFlagsAPI (Result Http.Error (List Flag))
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg m =
     case msg of
+        NoOp ->
+            (m, Cmd.none)
+        GetFlagsAPI ->
+            ( m, Http.send GotFlagsAPI getFlags )
+        GotFlagsAPI result ->
+            case result of
+                Err httpError ->
+                    let
+                        _ =
+                            Debug.log "FlagError" httpError
+                    in
+                        ( m, Cmd.none )
+
+                Ok flags ->
+                    ( { m | flags = flags }, Cmd.none )
         Expand i ->
-            { m | expanded = i }
+            ( { m | expanded = i }, Cmd.none )
 
         UpdateResponse i st ->
-            { m | response = st }
+            ( { m | response = st }, Cmd.none )
 
         SendResponse i f ->
             let
@@ -87,9 +103,7 @@ update msg m =
                     m.player
                 k = m.flags
             in
-            { m | response = "", player = { p | score = p.score + f.value }, flags = (updateFlagList k m.expanded) }
-        _ ->
-            m
+            ( { m | response = "", player = { p | score = p.score + f.value }, flags = (updateFlagList k m.expanded) }, Cmd.none )
 
 updateFlagList : List Flag -> Int -> List Flag
 updateFlagList lista indexTo =
@@ -106,6 +120,15 @@ updateFlag : Flag -> Flag
 updateFlag f = 
     {f | color = "red"}
 
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Sub.none
+
+
 --------------------------------------------------------------------------------
 -- VIEW FUNCTIONS
 --------------------------------------------------------------------------------
@@ -121,6 +144,7 @@ view m =
         , div []
             [ h1 [] [ text (viewScore m) ]
             ]
+        , button [ onClick (GetFlagsAPI) ] [ text "Get Flags" ]
         ]
 
 
@@ -187,16 +211,18 @@ flagChildren response i obj =
 -- Decoders
 ----------------------------
 
-flagDecoder : D.Decoder Flag
+flagDecoder : D.Decoder (List Flag)
 flagDecoder =
-    D.map4 flag
-        (D.field "title" D.string)
-        (D.field "description" D.string)
-        (D.field "value" (D.int))
-        (D.field "color" (D.string))
+    D.list (D.map5 flag
+        (D.at ["color"] D.string)
+        (D.at ["value"] D.int)
+        (D.at ["title"] D.string)
+        (D.at ["captured"] D.bool)
+        (D.at ["description"] D.string)
+    )
 
 
-
+getFlags : Http.Request (List Flag)
 getFlags =
   Http.get "http://localhost:3000/flags" (flagDecoder)
 
@@ -205,13 +231,13 @@ getFlags =
 --------------------------------------------------------------------------------
 
 
-example : Model
-example =
-    { init
-        | flags =
-            [ flag "Fibonacci" "Find some fibonacci numbers" 1 "white"
-            , flag "Collatz" "Sequence of numbers" 2 "white"
-            , flag "Factorial" "Blah" 2 "white"
-            ]
-    }
+-- example : Model
+-- example =
+--     { init
+--         | flags =
+--             [ flag "Fibonacci" "Find some fibonacci numbers" 1 "white" False
+--             , flag "Collatz" "Sequence of numbers" 2 "white" False
+--             , flag "Factorial" "Blah" 2 "white" False
+--             ]
+--     }
 
