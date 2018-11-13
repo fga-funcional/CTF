@@ -17,6 +17,7 @@ import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
+import Bootstrap.Alert as Alert
 
 
 main =
@@ -49,6 +50,7 @@ type alias Flag =
     , captured : Bool
     , answer : String
     , description : String
+    , alert : Alert.Visibility
     }
 
 
@@ -62,9 +64,9 @@ init _ =
 
 {-| Create simple flag element
 -}
-flag : String -> Int -> String -> Bool -> String -> String -> Flag
-flag color value title captured answer descr =
-    Flag color value title False answer descr
+flag : String -> Int -> String -> Bool -> String -> String -> Alert.Visibility -> Flag
+flag color value title captured answer descr alert =
+    Flag color value title False answer descr Alert.closed
 
 
 
@@ -129,9 +131,9 @@ updateFlagList lista ans indexTo =
                    
                     in   
                         if ans == answ then
-                            {fla | color = "green", captured = True}
+                            {fla | color = "green", captured = True, alert = Alert.shown}
                         else    
-                            {fla | color = "red", captured = False}
+                            {fla | color = "red", captured = False, alert = Alert.closed}
             else
                 { fla | color = fla.color}
     in
@@ -160,6 +162,15 @@ subscriptions model =
 -- VIEW FUNCTIONS
 --------------------------------------------------------------------------------
 
+updateFlagAlert : Flag -> Html Msg
+updateFlagAlert obj =
+    Alert.config
+        |> Alert.info
+        |> Alert.children
+            [ Alert.h4 [] [ text "You are correct!" ]
+            ]
+        |> Alert.view obj.alert
+
 displayPlaceholder f response= 
     if f.captured then
         f.answer
@@ -174,6 +185,7 @@ cardView m response i obj =
               Block.titleH4 [] [ text obj.description]
             , Block.custom <| input [ placeholder (displayPlaceholder obj response), onInput (UpdateResponse i), value response, readonly obj.captured ] []
             , Block.custom <| Button.button [ Button.secondary, Button.onClick (SendResponse i obj response), Button.disabled obj.captured ] [ text "Send" ]
+            , Block.custom <| updateFlagAlert obj
             ]
         |> Card.view
     ]
@@ -267,13 +279,14 @@ flagChildren response i obj =
 
 flagDecoder : D.Decoder (List Flag)
 flagDecoder =
-    D.list (D.map6 flag
+    D.list (D.map7 flag
         (D.at ["color"] D.string)
         (D.at ["value"] D.int)
         (D.at ["title"] D.string)
         (D.at ["captured"] D.bool)
         (D.at ["answer"] D.string)
         (D.at ["description"] D.string)
+        (D.succeed Alert.closed)
     )
 
 
