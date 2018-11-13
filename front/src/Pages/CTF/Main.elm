@@ -14,6 +14,7 @@ import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Card as Card
+import Bootstrap.Card.Block as Block
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
 
@@ -123,9 +124,9 @@ updateFlagList lista ans indexTo =
                    
                     in   
                         if ans == answ then
-                            {fla | color = "green"}
+                            {fla | color = "green", captured = True}
                         else    
-                            {fla | color = "red"}
+                            {fla | color = "red", captured = False}
             else
                 { fla | color = fla.color}
     in
@@ -154,15 +155,27 @@ subscriptions model =
 -- VIEW FUNCTIONS
 --------------------------------------------------------------------------------
 
-flagView : Flag -> Html Msg
-flagView currFlag = 
-    ListGroup.ul [ListGroup.li []
-        [ span []
-            [ b [] [ text "Title: "] 
-            , p [] [text currFlag.title]
+cardView m response i obj =
+    [Card.config [if obj.captured then Card.success else if obj.color == "white" then Card.light else Card.danger] 
+        |> Card.header [] [h2 [onClick (Expand i)] [text <| obj.title ++ " (" ++ String.fromInt obj.value ++ "pts)"]]
+        |> Card.block []
+            [
+              Block.titleH4 [] [ text obj.description]
+            , Block.custom <| input [ placeholder "Type an answer", onInput (UpdateResponse i), value response, readonly obj.captured ] []
+            , Block.custom <| Button.button [ Button.secondary, Button.onClick (SendResponse i obj response), Button.disabled obj.captured ] [ text "Send" ]
             ]
-        ]
+        |> Card.view
     ]
+
+-- flagView : Flag -> Html Msg
+-- flagView currFlag = 
+--     ListGroup.ul [ListGroup.li []
+--         [ span []
+--             [ b [] [ text "Title: "] 
+--             , p [] [text currFlag.title]
+--             ]
+--         ]
+--     ]
 
 view : Model -> Html Msg
 view m =
@@ -170,7 +183,7 @@ view m =
         [ CDN.stylesheet
         , div [ class "jumbotron"]
             [ h1 [] [ text "CTF Competition" ]
-            , ulIndexedMap (viewFlag m.response m.expanded) m.flags
+            , ulIndexedMap (viewFlag m m.response m.expanded) m.flags
             ]
         , div []
             [ h1 [] [ text (viewScore m) ]
@@ -184,12 +197,12 @@ viewScore m =
     "Score: " ++ String.fromInt m.player.score
 
 
-viewFlag : String -> Int -> Int -> Flag -> Html Msg
-viewFlag response expanded i obj =
+viewFlag : Model -> String -> Int -> Int -> Flag -> Html Msg
+viewFlag m response expanded i obj =
     let
         body =
             if i == expanded then
-                flagChildren response i obj
+                cardView m response i obj
 
             else
                 []
@@ -224,7 +237,6 @@ acc m =
 flagTitle i obj =
     h2 [ onClick (Expand i) ]
         [ text obj.title
-        , text <| " (" ++ String.fromInt obj.value ++ "pts)"
         ]
 
 
