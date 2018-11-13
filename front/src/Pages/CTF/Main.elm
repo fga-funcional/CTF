@@ -111,8 +111,13 @@ update msg m =
                 p =
                     m.player
                 k = m.flags
+                value = 
+                    if ans == f.answer then
+                        f.value
+                    else
+                        0
             in
-            ( { m | response = "", player = { p | score = p.score + f.value }, flags = (updateFlagList k ans m.expanded) }, Cmd.none )
+            ( { m | response = "", player = { p | score = p.score + value}, flags = (updateFlagList k ans m.expanded) }, Cmd.none )
 
 updateFlagList : List Flag -> String -> Int -> List Flag
 updateFlagList lista ans indexTo =
@@ -155,13 +160,19 @@ subscriptions model =
 -- VIEW FUNCTIONS
 --------------------------------------------------------------------------------
 
+displayPlaceholder f response= 
+    if f.captured then
+        f.answer
+    else
+        "Type an answer"
+
 cardView m response i obj =
     [Card.config [if obj.captured then Card.success else if obj.color == "white" then Card.light else Card.danger] 
         |> Card.header [] [h2 [onClick (Expand i)] [text <| obj.title ++ " (" ++ String.fromInt obj.value ++ "pts)"]]
         |> Card.block []
             [
               Block.titleH4 [] [ text obj.description]
-            , Block.custom <| input [ placeholder "Type an answer", onInput (UpdateResponse i), value response, readonly obj.captured ] []
+            , Block.custom <| input [ placeholder (displayPlaceholder obj response), onInput (UpdateResponse i), value response, readonly obj.captured ] []
             , Block.custom <| Button.button [ Button.secondary, Button.onClick (SendResponse i obj response), Button.disabled obj.captured ] [ text "Send" ]
             ]
         |> Card.view
