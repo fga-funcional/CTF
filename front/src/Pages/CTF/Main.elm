@@ -200,20 +200,33 @@ cardView m response i obj =
 --         ]
 --     ]
 
+rowMap =
+    htmlIndexedMap div p
+
 view : Model -> Html Msg
 view m =
     div []
         [ CDN.stylesheet
-        , div [ class "jumbotron"]
-            [ h1 [] [ text "CTF Competition" ]
-            , ulIndexedMap (viewFlag m m.response m.expanded) m.flags
+        , div [class "topnav"][ h3[][ text "Capture the flag"] ]
+        , div [class "container"]
+          [
+             div [class "sidenav"] 
+             [ 
+                 h4 [] [text "Programacao"],
+                 h4 [] [text "Matematica"],
+                 h4 [] [text "Fisica"],
+                 h4 [] [text "Miguelagem"]
+             ]
+          ,
+          div [class "score"]
+            [ p [] [ text (viewScore m) ]
             ]
-        , div []
-            [ h1 [] [ text (viewScore m) ]
-            ]
-        , Button.button [ Button.primary, Button.onClick (GetFlagsAPI) ] [ text "Get Flags" ]
+          , div [class "flagcontainer"] 
+             [ 
+                rowMap (viewFlag m m.response m.expanded) m.flags 
+             ]
+          ]
         ]
-
 
 viewScore : Model -> String
 viewScore m =
