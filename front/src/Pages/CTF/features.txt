@@ -1,0 +1,6 @@
+--> Seção de competição
+    -> Queda de pontos qdo alguem capturar a flag
+    -> Fila de players
+    -> streak de acertos na seção
+    -> randomizar categoria da seção
+-> Categorizar flags
