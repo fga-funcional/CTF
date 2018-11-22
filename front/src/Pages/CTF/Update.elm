@@ -2,7 +2,7 @@ module Pages.CTF.Update exposing (..)
 
 import Http
 import Pages.CTF.Model exposing (..)
-
+import Bootstrap.Alert as Alert
 
 init : () -> ( Model, Cmd Msg )
 init _ =
@@ -11,7 +11,6 @@ init _ =
 --------------------------------------------------------------------------------
 -- MESSAGES
 --------------------------------------------------------------------------------
-
 
 
 type Msg
@@ -70,9 +69,9 @@ updateFlagList lista ans indexTo =
                    
                     in   
                         if ans == answ then
-                            {fla | color = "green", captured = True}
+                            {fla | color = "green", captured = True, alert = Alert.shown}
                         else    
-                            {fla | color = "red", captured = False}
+                            {fla | color = "red", captured = False, alert = Alert.closed}
             else
                 { fla | color = fla.color}
     in
@@ -88,6 +87,9 @@ updateFlag ans f =
         else    
             {f | color = "red"}
 
+
 getFlags : Http.Request (List Flag)
 getFlags =
   Http.get "http://localhost:3000/flags" (flagDecoder)
+
+

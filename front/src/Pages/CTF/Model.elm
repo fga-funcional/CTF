@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as D
 import Json.Encode as E
+import Bootstrap.Alert as Alert
 
 
 --------------------------------------------------------------------------------
@@ -28,6 +29,7 @@ type alias Flag =
     , captured : Bool
     , answer : String
     , description : String
+    , alert : Alert.Visibility
     }
 
 
@@ -38,23 +40,24 @@ type alias Player =
 
 {-| Create simple flag element
 -}
-flag : String -> Int -> String -> Bool -> String -> String -> Flag
-flag color value title captured answer descr =
-    Flag color value title False answer descr
+flag : String -> Int -> String -> Bool -> String -> String -> Alert.Visibility -> Flag
+flag color value title captured answer descr alert =
+    Flag color value title False answer descr Alert.closed
+
 
 
 
 ----------------------------
 -- Decoders
 ----------------------------
-
 flagDecoder : D.Decoder (List Flag)
 flagDecoder =
-    D.list (D.map6 flag
+    D.list (D.map7 flag
         (D.at ["color"] D.string)
         (D.at ["value"] D.int)
         (D.at ["title"] D.string)
         (D.at ["captured"] D.bool)
         (D.at ["answer"] D.string)
         (D.at ["description"] D.string)
+        (D.succeed Alert.closed)
     )

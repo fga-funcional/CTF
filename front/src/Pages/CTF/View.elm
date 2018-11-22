@@ -14,7 +14,20 @@ import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
+import Bootstrap.Alert as Alert
 
+--------------------------------------------------------------------------------
+-- VIEW FUNCTIONS
+--------------------------------------------------------------------------------
+
+updateFlagAlert : Flag -> Html Msg
+updateFlagAlert obj =
+    Alert.config
+        |> Alert.info
+        |> Alert.children
+            [ Alert.h4 [] [ text "You are correct!" ]
+            ]
+        |> Alert.view obj.alert
 
 displayPlaceholder f response= 
     if f.captured then
@@ -30,6 +43,7 @@ cardView m response i obj =
               Block.titleH4 [] [ text obj.description]
             , Block.custom <| input [ placeholder (displayPlaceholder obj response), onInput (UpdateResponse i), value response, readonly obj.captured ] []
             , Block.custom <| Button.button [ Button.secondary, Button.onClick (SendResponse i obj response), Button.disabled obj.captured ] [ text "Send" ]
+            , Block.custom <| updateFlagAlert obj
             ]
         |> Card.view
     ]
@@ -44,20 +58,33 @@ cardView m response i obj =
 --         ]
 --     ]
 
+rowMap =
+    htmlIndexedMap div p
+
 view : Model -> Html Msg
 view m =
     div []
         [ CDN.stylesheet
-        , div [ class "jumbotron"]
-            [ h1 [] [ text "CTF Competition" ]
-            , ulIndexedMap (viewFlag m m.response m.expanded) m.flags
+        , div [class "topnav"][ h3[][ text "Capture the flag"] ]
+        , div [class "container"]
+          [
+             div [class "sidenav"] 
+             [ 
+                 h4 [] [text "Programacao"],
+                 h4 [] [text "Matematica"],
+                 h4 [] [text "Fisica"],
+                 h4 [] [text "Miguelagem"]
+             ]
+          ,
+          div [class "score"]
+            [ p [] [ text (viewScore m) ]
             ]
-        , div []
-            [ h1 [] [ text (viewScore m) ]
-            ]
-        , Button.button [ Button.primary, Button.onClick (GetFlagsAPI) ] [ text "Get Flags" ]
+          , div [class "flagcontainer"] 
+             [ 
+                rowMap (viewFlag m m.response m.expanded) m.flags 
+             ]
+          ]
         ]
-
 
 viewScore : Model -> String
 viewScore m =
@@ -116,5 +143,3 @@ flagChildren response i obj =
         ]
     ]
 
-
-----------------------------
