@@ -32,6 +32,11 @@ type alias Flag =
     , alert : Alert.Visibility
     }
 
+type alias Section = 
+    { flags : List Flag
+    , name : String    
+    }
+
 
 type alias Player =
     { score : Int
@@ -44,6 +49,9 @@ flag : String -> Int -> String -> Bool -> String -> String -> Alert.Visibility -
 flag color value title captured answer descr alert =
     Flag color value title False answer descr Alert.closed
 
+section : List Flag -> String -> Section
+section flags name =
+    Section flags name
 
 
 
@@ -60,4 +68,11 @@ flagDecoder =
         (D.at ["answer"] D.string)
         (D.at ["description"] D.string)
         (D.succeed Alert.closed)
+    )
+
+sectionDecoder : D.Decoder (List Section)
+sectionDecoder = 
+    D.list (D.map2 section
+    (D.at ["flags"] flagDecoder)
+    (D.at ["name"] D.string)
     )

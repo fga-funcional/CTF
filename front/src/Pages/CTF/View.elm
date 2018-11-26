@@ -65,7 +65,7 @@ view : Model -> Html Msg
 view m =
     div []
         [ CDN.stylesheet
-        , div [class "topnav"][ h3[][ text "Capture the flag"] ]
+        , div [class "topnav"][ img [src "image.jpeg", width 175, height 60][] ]
         , div [class "container"]
           [
              div [class "sidenav"] 
