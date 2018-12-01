@@ -15,9 +15,12 @@ import Network.Wai.Middleware.Cors
 
 instance ToJSON Flag
 instance FromJSON Flag
+instance ToJSON Section
+instance FromJSON Section
 
 data Flag = Flag 
-  { title :: String
+  { idFlag :: Int 
+  , title :: String
   , description :: String
   , value :: Int
   , color :: String
@@ -25,17 +28,35 @@ data Flag = Flag
   , captured :: Bool
   } deriving (Show, Generic)
 
+data Section = Section
+ { idSection :: Int
+ , flags :: [Flag]
+ , name :: String
+ } deriving (Show, Generic)
+
 
 k= "8320987112741390144276341183223364380754172606361245952449277696409600000000000000"
-flags =
-  [ Flag "Fibonacci" "Qual o quinto número de fibonacci?" 1 "white" "5" False
-    , Flag "Factorial" "Qual fatorial de 60?" 2 "white" k False
+example_flags =
+  [ Flag 1 "Fibonacci" "Qual o quinto número de fibonacci?" 1 "white" "5" False
+    , Flag 2 "Factorial" "Qual fatorial de 60?" 2 "white" k False
+  ]
+sections = 
+  [
+    Section 1 example_flags "Matematica"
+  , Section 2 example_flags "Portugues"
   ]
 
 urls = fromList
   [ ("Say hello", String "/hello")
   , ("List of flags", String "/flags")
+  , ("List of sections", String "/sections")
   ]
+
+matchesSectionId :: Int -> Section -> Bool
+matchesSectionId id section = idSection section == id
+
+matchesFlagId :: Int -> Flag -> Bool
+matchesFlagId id flag = idFlag flag == id
 
 main = do
   putStrLn "Starting Server..."
@@ -49,8 +70,19 @@ main = do
       text "hello world!"
 
     get "/flags" $ do
-      json flags
+      json example_flags
     
     post "/flags/:id" $ do
-      json flags
+      json example_flags
+    
+    get "/sections" $ do
+      json sections
+    
+    get "/sections/:id" $ do
+      id <- param "id"
+      json (filter (matchesSectionId id) sections)
+    
+    get "/sections/:id" $ do
+      id <- param "id"
+      json (filter (matchesFlagId id) example_flags)
   

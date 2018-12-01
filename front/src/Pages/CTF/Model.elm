@@ -15,15 +15,17 @@ import Bootstrap.Alert as Alert
 
 
 type alias Model =
-    { flags : List Flag
+    { sections : List Section
     , expanded : Int
     , response : String
     , player : Player
+    , curr_section : Section
     }
 
 
 type alias Flag =
-    { color : String
+    { idFlag : Int
+    , color : String
     , value : Int
     , title : String
     , captured : Bool
@@ -33,7 +35,8 @@ type alias Flag =
     }
 
 type alias Section = 
-    { flags : List Flag
+    { idSection : Int
+    , flags : List Flag
     , name : String    
     }
 
@@ -45,13 +48,19 @@ type alias Player =
 
 {-| Create simple flag element
 -}
-flag : String -> Int -> String -> Bool -> String -> String -> Alert.Visibility -> Flag
-flag color value title captured answer descr alert =
-    Flag color value title False answer descr Alert.closed
+flag : Int -> String -> Int -> String -> Bool -> String -> String -> Alert.Visibility -> Flag
+flag idFlag color value title captured answer descr alert =
+    Flag idFlag color value title False answer descr Alert.closed
 
-section : List Flag -> String -> Section
-section flags name =
-    Section flags name
+stdFlag =
+    flag 999999999 "white" 0 "Inexistente" False "Nao existe" "Deu merda" Alert.closed
+
+section : Int -> List Flag -> String -> Section
+section idSection flags name =
+    Section idSection flags name
+
+stdSection =
+    section 99999999 [stdFlag] "Secao inexistente"
 
 
 
@@ -60,19 +69,33 @@ section flags name =
 ----------------------------
 flagDecoder : D.Decoder (List Flag)
 flagDecoder =
-    D.list (D.map7 flag
-        (D.at ["color"] D.string)
-        (D.at ["value"] D.int)
-        (D.at ["title"] D.string)
-        (D.at ["captured"] D.bool)
-        (D.at ["answer"] D.string)
-        (D.at ["description"] D.string)
-        (D.succeed Alert.closed)
+    D.list (
+        oneFlagDecoder
     )
 
 sectionDecoder : D.Decoder (List Section)
 sectionDecoder = 
-    D.list (D.map2 section
-    (D.at ["flags"] flagDecoder)
-    (D.at ["name"] D.string)
+    D.list (
+        oneSectionDecoder
     )
+
+
+oneSectionDecoder : D.Decoder (Section)
+oneSectionDecoder = 
+    D.map3 section 
+    (D.at ["idSection"] D.int)
+    (D.at ["flags"] flagDecoder) 
+    (D.at ["name"] D.string)
+
+oneFlagDecoder : D.Decoder (Flag)
+oneFlagDecoder = 
+    D.map8 flag 
+    (D.at ["idFlag"] D.int)
+    (D.at ["color"] D.string)
+    (D.at ["value"] D.int)
+    (D.at ["title"] D.string)
+    (D.at ["captured"] D.bool)
+    (D.at ["answer"] D.string)
+    (D.at ["description"] D.string)
+    (D.succeed Alert.closed)
+    
