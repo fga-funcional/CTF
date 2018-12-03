@@ -77,11 +77,18 @@ view m =
              ]
           ,
           div [class "score"]
-            [ p [] [ text (viewScore m) ]
+            [ p [] [ text (viewScore m),
+                p [] [text (String.fromInt m.expanded)],
+                p [] [text (String.fromInt m.curr_section.expanded)],
+                p [] [text (.description <| Maybe.withDefault stdFlag <| getElem (m.curr_section.expanded+1) m.curr_section.flags)],
+                p [] [text <| String.fromInt <| acc m],
+                p [] [text <| String.fromInt <| m.player.score]
+            ]
+            
             ]
           , div [class "flagcontainer"] 
              [ 
-                rowMap (viewFlag m m.response m.expanded) m.curr_section.flags 
+                rowMap (viewFlag m m.response m.curr_section.expanded) m.curr_section.flags 
              ]
           ]
         ]
@@ -125,7 +132,7 @@ getElem index list =
 
 acc : Model -> Int
 acc m =
-    Maybe.withDefault 0 (getElem m.expanded (List.map .value m.curr_section.flags))
+    Maybe.withDefault 0 (getElem (m.curr_section.expanded+1) (List.map .value m.curr_section.flags))
 
 
 flagTitle m i obj =

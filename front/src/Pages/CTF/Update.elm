@@ -53,7 +53,7 @@ update msg m =
                 Err httpError ->
                     let
                         _ =
-                            Debug.log "foo is" httpError
+                            "foo is"
                     in
                         ( m, Cmd.none )
 
@@ -66,14 +66,14 @@ update msg m =
                 Err httpError ->
                     let
                         _ =
-                            Debug.log "foo is" httpError
+                            "foo is"
                     in
                         ( m, Cmd.none )
 
                 Ok section ->
                     let
                         _ =
-                            Debug.log "foo is" section
+                            "foo is"
                     in
                         ( { m | curr_section = section }, Cmd.none )
 
@@ -83,8 +83,9 @@ update msg m =
         ExpandFlag sec i ->
             let
                 cursec = m.curr_section
+                cursecflags = cursec.flags
             in
-                ({m | curr_section = {cursec | expanded = i}, sections = (updateSectionList m.sections cursec) }, Cmd.none)
+                ({m | curr_section = {cursec | expanded = i, flags = updateFlagList m.curr_section m.response (m.curr_section.expanded+1)}, sections = (updateSectionList m.sections m.curr_section) }, Cmd.none)
         
         UpdateResponse i st ->
             ( { m | response = st }, Cmd.none )
@@ -96,6 +97,7 @@ update msg m =
                     m.player
                 k = sec.flags
                 a = Maybe.withDefault stdFlag <| List.head (List.filter(\x -> x.idFlag == i) k)
+                
                 value = 
                     if ans == a.answer then
                         a.value
@@ -117,8 +119,8 @@ updateSectionList sections curr_sec =
         
 
 
-updateFlagList : List Flag -> String -> Int -> List Flag
-updateFlagList lista ans indexTo =
+updateFlagList : Section -> String -> Int -> List Flag
+updateFlagList sec ans indexTo =
     let
         toggle index fla =
             if index == indexTo then
@@ -133,7 +135,7 @@ updateFlagList lista ans indexTo =
             else
                 { fla | color = fla.color}
     in
-        List.indexedMap toggle lista
+        List.indexedMap toggle sec.flags
 
 updateFlag : String -> Flag -> Flag
 updateFlag ans f =   
