@@ -16,6 +16,7 @@ init _ =
 type Msg
     = NoOp
     | Expand Int
+    | ExpandFlag Section Int
     | UpdateResponse Int String
     | SendResponse Int Section String
     -- | GetFlagsAPI 
@@ -73,7 +74,13 @@ update msg m =
 
         Expand i ->
             ( { m | expanded = i }, Cmd.none )
-
+        
+        ExpandFlag sec i ->
+            let
+                cursec = m.curr_section
+            in
+                ({m | curr_section = {cursec | expanded = i}, sections = (updateSectionList m.sections cursec) }, Cmd.none)
+        
         UpdateResponse i st ->
             ( { m | response = st }, Cmd.none )
 
