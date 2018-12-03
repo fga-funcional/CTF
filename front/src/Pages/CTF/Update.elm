@@ -85,7 +85,7 @@ update msg m =
                 cursec = m.curr_section
                 cursecflags = cursec.flags
             in
-                ({m | curr_section = {cursec | expanded = i, flags = updateFlagList m.curr_section m.response (m.curr_section.expanded+1)}, sections = (updateSectionList m.sections m.curr_section) }, Cmd.none)
+                ({m | curr_section = {cursec | expanded = i} }, Cmd.none)
         
         UpdateResponse i st ->
             ( { m | response = st }, Cmd.none )
@@ -97,14 +97,16 @@ update msg m =
                     m.player
                 k = sec.flags
                 a = Maybe.withDefault stdFlag <| List.head (List.filter(\x -> x.idFlag == i) k)
-                
+                cursec = m.curr_section
                 value = 
                     if ans == a.answer then
                         a.value
                     else
                         0
             in
-            ( { m | response = "", player = { p | score = p.score + value}, sections = (updateSectionList m.sections sec) }, Cmd.none )
+            ( { m | response = "", player = { p | score = p.score + value}, 
+                curr_section = { sec | flags = updateFlagList sec m.response (sec.expanded)},
+                sections = (updateSectionList m.sections sec) }, Cmd.none )
 
 -- Atualiza lista de secoes com uma nova secao e ja ordena a nova lista de secoes
 updateSectionList : List Section -> Section -> List Section 
