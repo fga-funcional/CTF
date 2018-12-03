@@ -37,12 +37,12 @@ displayPlaceholder f response=
 
 cardView m response i obj =
     [Card.config [if obj.captured then Card.success else if obj.color == "white" then Card.light else Card.danger] 
-        |> Card.header [] [h2 [onClick (Expand i)] [text <| obj.title ++ " (" ++ String.fromInt obj.value ++ "pts)"]]
+        |> Card.header [] [h2 [onClick (ExpandFlag m.curr_section i)] [text <| obj.title ++ " (" ++ String.fromInt obj.value ++ "pts)"]]
         |> Card.block []
             [
               Block.titleH4 [] [ text obj.description]
             , Block.custom <| input [ placeholder (displayPlaceholder obj response), onInput (UpdateResponse i), value response, readonly obj.captured ] []
-            , Block.custom <| Button.button [ Button.secondary, Button.onClick (SendResponse i obj response), Button.disabled obj.captured ] [ text "Send" ]
+            , Block.custom <| Button.button [ Button.secondary, Button.onClick (SendResponse i m.curr_section response), Button.disabled obj.captured ] [ text "Send" ]
             , Block.custom <| updateFlagAlert obj
             ]
         |> Card.view
@@ -81,7 +81,7 @@ view m =
             ]
           , div [class "flagcontainer"] 
              [ 
-                rowMap (viewFlag m m.response m.expanded) m.flags 
+                rowMap (viewFlag m m.response m.expanded) m.curr_section.flags 
              ]
           ]
         ]
@@ -101,7 +101,7 @@ viewFlag m response expanded i obj =
             else
                 []
     in
-    div [style "background-color" obj.color] (flagTitle i obj :: body)
+    div [style "background-color" obj.color] (flagTitle m i obj :: body)
 
 
 getElem : Int -> List a -> Maybe a
@@ -125,21 +125,21 @@ getElem index list =
 
 acc : Model -> Int
 acc m =
-    Maybe.withDefault 0 (getElem m.expanded (List.map .value m.flags))
+    Maybe.withDefault 0 (getElem m.expanded (List.map .value m.curr_section.flags))
 
 
-flagTitle i obj =
-    h2 [ onClick (Expand i) ]
+flagTitle m i obj =
+    h2 [ onClick (ExpandFlag m.curr_section i) ]
         [ text obj.title
         ]
 
 
-flagChildren response i obj =
+flagChildren m response i obj =
     [ p [] [ text obj.description ]
     , div []
         [ text "Answer: "
         , input [ placeholder "42", onInput (UpdateResponse i), value response, readonly obj.captured ] []
-        , Button.button [ Button.secondary, Button.onClick (SendResponse i obj response), Button.disabled obj.captured ] [ text "Send" ]
+        , Button.button [ Button.secondary, Button.onClick (SendResponse i m.curr_section response), Button.disabled obj.captured ] [ text "Send" ]
         ]
     ]
 
