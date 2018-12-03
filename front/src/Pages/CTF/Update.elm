@@ -3,6 +3,7 @@ module Pages.CTF.Update exposing (..)
 import Http
 import Pages.CTF.Model exposing (..)
 import Bootstrap.Alert as Alert
+import Debug exposing (log)
 
 init : () -> ( Model, Cmd Msg )
 init _ =
@@ -52,12 +53,12 @@ update msg m =
                 Err httpError ->
                     let
                         _ =
-                            "SectionError"
+                            Debug.log "foo is" httpError
                     in
                         ( m, Cmd.none )
 
                 Ok sections ->
-                    ( { m | sections = sections }, Cmd.none )
+                    ( { m | sections = sections, curr_section = Maybe.withDefault stdSection (List.head sections) }, Cmd.none )
         GetOneSectionAPI id ->
             ( m, Http.send GotOneSectionAPI (getOneSection id))
         GotOneSectionAPI result ->
@@ -65,12 +66,16 @@ update msg m =
                 Err httpError ->
                     let
                         _ =
-                            "OneSectionError"
+                            Debug.log "foo is" httpError
                     in
                         ( m, Cmd.none )
 
                 Ok section ->
-                    ( { m | curr_section = section }, Cmd.none )
+                    let
+                        _ =
+                            Debug.log "foo is" section
+                    in
+                        ( { m | curr_section = section }, Cmd.none )
 
         Expand i ->
             ( { m | expanded = i }, Cmd.none )
@@ -151,7 +156,7 @@ getSections =
 
 
 getOneSection : Int -> Http.Request (Section)
-getOneSection id = Http.get ("http://localhost:3000/section/" ++ String.fromInt id) oneSectionDecoder
+getOneSection id = Http.get ("http://localhost:3000/sections/" ++ String.fromInt id) oneSectionDecoder
 
 getOneFlag : Int -> Http.Request (Flag)
 getOneFlag id = Http.get ("http://localhost:3000/flag/" ++ String.fromInt id) oneFlagDecoder
