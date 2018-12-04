@@ -62,7 +62,7 @@ rowMap =
     htmlIndexedMap div p
 
 sidebarContent : Model -> List (Html msg)
-sidebarContent m = List.map (p[]) [(List.map (text) <|  List.map .name m.sections)]
+sidebarContent m = List.map (\x -> p [] [text x]) (List.map .name m.sections)
 
 view : Model -> Html Msg
 view m =

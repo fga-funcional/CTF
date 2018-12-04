@@ -26,4 +26,4 @@ echo "OK!" || echo "Failed!"
 echo "" &&
 
 echo "Compiling sass and entering watch mode..."
-sass $SASS_FOLDER/main.scss:$STATIC_FOLDER/main.css --watch
+sass $SASS_FOLDER/main.scss:$STATIC_FOLDER/main.css

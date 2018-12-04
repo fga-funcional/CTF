@@ -4956,29 +4956,29 @@ var author$project$Pages$CTF$Model$Model = F5(
 		return {di: curr_section, cv: expanded, dz: player, dA: response, dD: sections};
 	});
 var author$project$Pages$CTF$Model$Section = F4(
-	function (idSection, flags, name, expanded) {
+	function (flags, idSection, name, expanded) {
 		return {cv: expanded, dm: flags, dr: idSection, dv: name};
 	});
 var author$project$Pages$CTF$Model$section = F4(
-	function (idSection, flags, name, expand) {
-		return A4(author$project$Pages$CTF$Model$Section, idSection, flags, name, 0);
+	function (flags, idSection, name, expand) {
+		return A4(author$project$Pages$CTF$Model$Section, flags, idSection, name, 0);
 	});
 var author$project$Pages$CTF$Model$Flag = F8(
-	function (idFlag, color, value, title, captured, answer, description, alert) {
+	function (color, value, idFlag, answer, title, captured, description, alert) {
 		return {c6: alert, c7: answer, dc: captured, df: color, dj: description, dq: idFlag, dH: title, dK: value};
 	});
 var rundis$elm_bootstrap$Bootstrap$Alert$Closed = 3;
 var rundis$elm_bootstrap$Bootstrap$Alert$closed = 3;
 var author$project$Pages$CTF$Model$flag = F8(
-	function (idFlag, color, value, title, captured, answer, descr, alert) {
-		return A8(author$project$Pages$CTF$Model$Flag, idFlag, color, value, title, false, answer, descr, rundis$elm_bootstrap$Bootstrap$Alert$closed);
+	function (color, value, idFlag, answer, title, captured, descr, alert) {
+		return A8(author$project$Pages$CTF$Model$Flag, color, value, idFlag, answer, title, false, descr, rundis$elm_bootstrap$Bootstrap$Alert$closed);
 	});
-var author$project$Pages$CTF$Model$stdFlag = A8(author$project$Pages$CTF$Model$flag, 999999999, 'white', 0, 'Inexistente', false, 'Nao existe', 'Deu merda', rundis$elm_bootstrap$Bootstrap$Alert$closed);
+var author$project$Pages$CTF$Model$stdFlag = A8(author$project$Pages$CTF$Model$flag, 'white', 0, 999999999, 'Inexistente', 'Nao existe', false, 'Deu merda', rundis$elm_bootstrap$Bootstrap$Alert$closed);
 var author$project$Pages$CTF$Model$stdSection = A4(
 	author$project$Pages$CTF$Model$section,
-	99999999,
 	_List_fromArray(
 		[author$project$Pages$CTF$Model$stdFlag]),
+	99999999,
 	'Secao inexistente',
 	0);
 var author$project$Pages$CTF$Update$GotSectionsAPI = function (a) {
@@ -5055,11 +5055,6 @@ var author$project$Pages$CTF$Model$oneFlagDecoder = A9(
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
-			['idFlag']),
-		elm$json$Json$Decode$int),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
 			['color']),
 		elm$json$Json$Decode$string),
 	A2(
@@ -5070,6 +5065,16 @@ var author$project$Pages$CTF$Model$oneFlagDecoder = A9(
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
+			['idFlag']),
+		elm$json$Json$Decode$int),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['answer']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
 			['title']),
 		elm$json$Json$Decode$string),
 	A2(
@@ -5077,11 +5082,6 @@ var author$project$Pages$CTF$Model$oneFlagDecoder = A9(
 		_List_fromArray(
 			['captured']),
 		elm$json$Json$Decode$bool),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['answer']),
-		elm$json$Json$Decode$string),
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
@@ -5097,23 +5097,19 @@ var author$project$Pages$CTF$Model$oneSectionDecoder = A5(
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
-			['idSection']),
-		elm$json$Json$Decode$int),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
 			['flags']),
 		author$project$Pages$CTF$Model$flagDecoder),
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
-			['name']),
-		elm$json$Json$Decode$string),
+			['idSection']),
+		elm$json$Json$Decode$int),
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
-			['']),
-		elm$json$Json$Decode$int));
+			['name']),
+		elm$json$Json$Decode$string),
+	elm$json$Json$Decode$succeed(0));
 var author$project$Pages$CTF$Model$sectionDecoder = elm$json$Json$Decode$list(author$project$Pages$CTF$Model$oneSectionDecoder);
 var elm$http$Http$Internal$EmptyBody = {$: 0};
 var elm$http$Http$emptyBody = elm$http$Http$Internal$EmptyBody;
@@ -5842,9 +5838,30 @@ var author$project$Pages$CTF$Update$GotOneSectionAPI = function (a) {
 var author$project$Pages$CTF$Update$getOneSection = function (id) {
 	return A2(
 		elm$http$Http$get,
-		'http://localhost:3000/section/' + elm$core$String$fromInt(id),
+		'http://localhost:3000/sections/' + elm$core$String$fromInt(id),
 		author$project$Pages$CTF$Model$oneSectionDecoder);
 };
+var rundis$elm_bootstrap$Bootstrap$Alert$Shown = 0;
+var rundis$elm_bootstrap$Bootstrap$Alert$shown = 0;
+var author$project$Pages$CTF$Update$updateFlagList = F3(
+	function (sec, ans, indexTo) {
+		var toggle = F2(
+			function (index, fla) {
+				if (_Utils_eq(index, indexTo)) {
+					var answ = fla.c7;
+					return _Utils_eq(ans, answ) ? _Utils_update(
+						fla,
+						{c6: rundis$elm_bootstrap$Bootstrap$Alert$shown, dc: true, df: 'green'}) : _Utils_update(
+						fla,
+						{c6: rundis$elm_bootstrap$Bootstrap$Alert$closed, dc: false, df: 'red'});
+				} else {
+					return _Utils_update(
+						fla,
+						{df: fla.df});
+				}
+			});
+		return A2(elm$core$List$indexedMap, toggle, sec.dm);
+	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -5932,14 +5949,20 @@ var author$project$Pages$CTF$Update$update = F2(
 				var result = msg.a;
 				if (result.$ === 1) {
 					var httpError = result.a;
-					var _n2 = 'SectionError';
+					var _n2 = 'foo is';
 					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 				} else {
 					var sections = result.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							m,
-							{dD: sections}),
+							{
+								di: A2(
+									elm$core$Maybe$withDefault,
+									author$project$Pages$CTF$Model$stdSection,
+									elm$core$List$head(sections)),
+								dD: sections
+							}),
 						elm$core$Platform$Cmd$none);
 				}
 			case 7:
@@ -5954,10 +5977,11 @@ var author$project$Pages$CTF$Update$update = F2(
 				var result = msg.a;
 				if (result.$ === 1) {
 					var httpError = result.a;
-					var _n4 = 'OneSectionError';
+					var _n4 = 'foo is';
 					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 				} else {
 					var section = result.a;
+					var _n5 = 'foo is';
 					return _Utils_Tuple2(
 						_Utils_update(
 							m,
@@ -5975,14 +5999,14 @@ var author$project$Pages$CTF$Update$update = F2(
 				var sec = msg.a;
 				var i = msg.b;
 				var cursec = m.di;
+				var cursecflags = cursec.dm;
 				return _Utils_Tuple2(
 					_Utils_update(
 						m,
 						{
 							di: _Utils_update(
 								cursec,
-								{cv: i}),
-							dD: A2(author$project$Pages$CTF$Update$updateSectionList, m.dD, cursec)
+								{cv: i})
 						}),
 					elm$core$Platform$Cmd$none);
 			case 3:
@@ -5999,6 +6023,7 @@ var author$project$Pages$CTF$Update$update = F2(
 				var ans = msg.c;
 				var p = m.dz;
 				var k = sec.dm;
+				var cursec = m.di;
 				var a = A2(
 					elm$core$Maybe$withDefault,
 					author$project$Pages$CTF$Model$stdFlag,
@@ -6014,6 +6039,11 @@ var author$project$Pages$CTF$Update$update = F2(
 					_Utils_update(
 						m,
 						{
+							di: _Utils_update(
+								sec,
+								{
+									dm: A3(author$project$Pages$CTF$Update$updateFlagList, sec, m.dA, sec.cv)
+								}),
 							dz: _Utils_update(
 								p,
 								{dC: p.dC + value}),
@@ -6060,6 +6090,28 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$p = _VirtualDom_node('p');
 var author$project$Pages$CTF$View$rowMap = A2(author$project$Utils$htmlIndexedMap, elm$html$Html$div, elm$html$Html$p);
+var elm$html$Html$a = _VirtualDom_node('a');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var author$project$Pages$CTF$View$sidebarContent = function (m) {
+	return A2(
+		elm$core$List$map,
+		function (x) {
+			return A2(
+				elm$html$Html$a,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(x)
+					]));
+		},
+		A2(
+			elm$core$List$map,
+			function ($) {
+				return $.dv;
+			},
+			m.dD));
+};
 var author$project$Pages$CTF$Update$ExpandFlag = F2(
 	function (a, b) {
 		return {$: 2, a: a, b: b};
@@ -6076,8 +6128,6 @@ var author$project$Pages$CTF$View$displayPlaceholder = F2(
 	function (f, response) {
 		return f.dc ? f.c7 : 'Type an answer';
 	});
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var rundis$elm_bootstrap$Bootstrap$Alert$Config = elm$core$Basics$identity;
 var rundis$elm_bootstrap$Bootstrap$Alert$children = F2(
 	function (children_, _n0) {
@@ -6086,7 +6136,6 @@ var rundis$elm_bootstrap$Bootstrap$Alert$children = F2(
 			configRec,
 			{co: children_});
 	});
-var rundis$elm_bootstrap$Bootstrap$Alert$Shown = 0;
 var rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary = 1;
 var rundis$elm_bootstrap$Bootstrap$Alert$config = {aH: _List_Nil, co: _List_Nil, w: elm$core$Maybe$Nothing, bx: 1, e: 0, E: false};
 var elm$html$Html$h4 = _VirtualDom_node('h4');
@@ -7127,37 +7176,7 @@ var author$project$Pages$CTF$View$view = function (m) {
 							[
 								elm$html$Html$Attributes$class('sidenav')
 							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$h4,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Programacao')
-									])),
-								A2(
-								elm$html$Html$h4,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Matematica')
-									])),
-								A2(
-								elm$html$Html$h4,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Fisica')
-									])),
-								A2(
-								elm$html$Html$h4,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Miguelagem')
-									]))
-							])),
+						author$project$Pages$CTF$View$sidebarContent(m)),
 						A2(
 						elm$html$Html$div,
 						_List_fromArray(
@@ -7185,7 +7204,7 @@ var author$project$Pages$CTF$View$view = function (m) {
 							[
 								A2(
 								author$project$Pages$CTF$View$rowMap,
-								A3(author$project$Pages$CTF$View$viewFlag, m, m.dA, m.cv),
+								A3(author$project$Pages$CTF$View$viewFlag, m, m.dA, m.di.cv),
 								m.di.dm)
 							]))
 					]))
