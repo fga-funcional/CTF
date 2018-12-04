@@ -61,6 +61,9 @@ cardView m response i obj =
 rowMap =
     htmlIndexedMap div p
 
+sidebarContent : Model -> List (Html msg)
+sidebarContent m = List.map (p[]) [(List.map (text) <|  List.map .name m.sections)]
+
 view : Model -> Html Msg
 view m =
     div []
@@ -68,21 +71,11 @@ view m =
         , div [class "topnav"][ img [src "image.jpeg", width 175, height 60][] ]
         , div [class "container"]
           [
-             div [class "sidenav"] 
-             [ 
-                 h4 [] [text "Programacao"],
-                 h4 [] [text "Matematica"],
-                 h4 [] [text "Fisica"],
-                 h4 [] [text "Miguelagem"]
-             ]
+             div [class "sidenav"] (sidebarContent m)
+             
           ,
           div [class "score"]
-            [ p [] [ text (viewScore m),
-                p [] [text (String.fromInt m.expanded)],
-                p [] [text (String.fromInt m.curr_section.expanded)],
-                p [] [text (.description <| Maybe.withDefault stdFlag <| getElem (m.curr_section.expanded+1) m.curr_section.flags)],
-                p [] [text <| String.fromInt <| acc m],
-                p [] [text <| String.fromInt <| m.player.score]
+            [ p [] [ text (viewScore m)
             ]
             
             ]
