@@ -6090,7 +6090,6 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$p = _VirtualDom_node('p');
 var author$project$Pages$CTF$View$rowMap = A2(author$project$Utils$htmlIndexedMap, elm$html$Html$div, elm$html$Html$p);
-var elm$html$Html$a = _VirtualDom_node('a');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var author$project$Pages$CTF$View$sidebarContent = function (m) {
@@ -6098,7 +6097,7 @@ var author$project$Pages$CTF$View$sidebarContent = function (m) {
 		elm$core$List$map,
 		function (x) {
 			return A2(
-				elm$html$Html$a,
+				elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[

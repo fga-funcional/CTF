@@ -8,3 +8,6 @@ import Pages.CTF.Update exposing (..)
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.none
+
+-- URLS
+

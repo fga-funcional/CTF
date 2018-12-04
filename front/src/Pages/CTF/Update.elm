@@ -4,10 +4,13 @@ import Http
 import Pages.CTF.Model exposing (..)
 import Bootstrap.Alert as Alert
 import Debug exposing (log)
+import Url
+import Browser
+import Browser.Navigation as Nav
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( Model [] 0 "" { score = 0 } stdSection,  Http.send GotSectionsAPI getSections)
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init fs url key =
+    ( Model url key [] 0 "" { score = 0 } stdSection,  Http.send GotSectionsAPI getSections)
 
 --------------------------------------------------------------------------------
 -- MESSAGES
@@ -16,6 +19,8 @@ init _ =
 
 type Msg
     = NoOp
+    | UrlChanged Url.Url
+    | LinkClicked Browser.UrlRequest
     | Expand Int
     | ExpandFlag Section Int
     | UpdateResponse Int String
@@ -46,6 +51,14 @@ update msg m =
 
         --         Ok flags ->
         --             ( { m | flags = flags }, Cmd.none )
+        UrlChanged url ->
+            ({ m | curr_url = url}, Cmd.none)
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    (m, Nav.pushUrl m.key (Url.toString url))
+                Browser.External href ->
+                    (m, Nav.load href)
         GetSectionsAPI ->
             ( m, Http.send GotSectionsAPI getSections )
         GotSectionsAPI result ->

@@ -7,6 +7,8 @@ import Html.Events exposing (..)
 import Json.Decode as D
 import Json.Encode as E
 import Bootstrap.Alert as Alert
+import Browser.Navigation as Nav
+import Url
 
 
 --------------------------------------------------------------------------------
@@ -15,7 +17,9 @@ import Bootstrap.Alert as Alert
 
 
 type alias Model =
-    { sections : List Section
+    { curr_url : Url.Url
+    , key : Nav.Key
+    , sections : List Section
     , expanded : Int
     , response : String
     , player : Player
