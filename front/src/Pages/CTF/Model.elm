@@ -27,8 +27,8 @@ type alias Flag =
     { color : String
     , value : Int 
     , idFlag : Int
-    , title : String
     , answer : String
+    , title : String
     , captured : Bool
     , description : String
     , alert : Alert.Visibility
