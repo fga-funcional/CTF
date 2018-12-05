@@ -17,6 +17,8 @@ instance ToJSON Flag
 instance FromJSON Flag
 instance ToJSON Section
 instance FromJSON Section
+instance ToJSON Player
+instance FromJSON Player
 
 data Flag = Flag 
   { idFlag :: Int 
@@ -33,6 +35,12 @@ data Section = Section
  , flags :: [Flag]
  , name :: String
  } deriving (Show, Generic)
+
+data Player = Player
+  {
+    aliasPlayer :: String
+    , points :: Int
+  } deriving (Show, Generic)
 
 
 k= "8320987112741390144276341183223364380754172606361245952449277696409600000000000000"
@@ -90,4 +98,7 @@ main = do
     get "/sections/:id" $ do
       id <- param "id"
       json (filter (matchesFlagId id) example_flags)
-  
+
+    post "/ranking" $ do
+      player <- jsonData :: ActionM Player
+      json player
