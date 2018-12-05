@@ -1,5 +1,5 @@
 flags: {}
 packages:
-- '.'
-extra-deps: []
+- .
+extra-deps: [HDBC-2.4.0.2, haskelldb-2.2.4, HDBC-sqlite3-2.3.3.1]
 resolver: lts-3.1
