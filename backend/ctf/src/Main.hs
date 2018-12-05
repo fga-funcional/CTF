@@ -40,10 +40,15 @@ example_flags =
   [ Flag 1 "Fibonacci" "Qual o quinto número de fibonacci?" 1 "white" "5" False
     , Flag 2 "Factorial" "Qual fatorial de 60?" 2 "white" k False
   ]
+
+example_flags2 =
+  [ Flag 1 "ieaofiaeo" "Qual o quinto número de fibonacci?" 1 "white" "5" False
+  ]
+  
 sections = 
   [
-    Section 1 example_flags "Matematica"
-  , Section 2 example_flags "Portugues"
+    Section 1 example_flags "Matematica",
+    Section 2 example_flags2 "Português"
   ]
 
 urls = fromList
@@ -80,7 +85,7 @@ main = do
     
     get "/sections/:id" $ do
       id <- param "id"
-      json (filter (matchesSectionId id) sections)
+      json (head $ filter (matchesSectionId id) sections)
     
     get "/sections/:id" $ do
       id <- param "id"
