@@ -14,6 +14,6 @@ main =
         , update = update
         , view = view
         , subscriptions = subscriptions
-        , onUrlRequest = UrlChanged
-        , onUrlChange = LinkClicked
+        , onUrlRequest = LinkClicked
+        , onUrlChange = UrlChanged
         }

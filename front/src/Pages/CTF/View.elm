@@ -15,6 +15,7 @@ import Bootstrap.Card.Block as Block
 import Bootstrap.Button as Button
 import Bootstrap.CDN as CDN
 import Bootstrap.Alert as Alert
+import Browser exposing (..)
 
 --------------------------------------------------------------------------------
 -- VIEW FUNCTIONS
@@ -61,12 +62,15 @@ cardView m response i obj =
 rowMap =
     htmlIndexedMap div p
 
-sidebarContent : Model -> List (Html msg)
-sidebarContent m = List.map (\x -> p [] [text x]) (List.map .name m.sections)
+sidebarContent : Model -> List (Html Msg)
+sidebarContent m =
+    List.map (\y -> p[] [a [href "#", onClick (GetOneSectionAPI <| Maybe.withDefault 99999999 <| String.toInt y)] [text ("Section " ++ y)]]) <| List.map String.fromInt <| List.map .idSection m.sections
 
-view : Model -> Html Msg
+
+view : Model -> Browser.Document Msg
 view m =
-    div []
+    {title = "Capture The Flag",
+    body = [div []
         [ CDN.stylesheet
         , div [class "topnav"][ img [src "image.jpeg", width 175, height 60][] ]
         , div [class "container"]
@@ -85,6 +89,8 @@ view m =
              ]
           ]
         ]
+    ]}    
+    
 
 viewScore : Model -> String
 viewScore m =

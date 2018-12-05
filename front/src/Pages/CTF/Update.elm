@@ -8,7 +8,7 @@ import Url
 import Browser
 import Browser.Navigation as Nav
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init : () -> Url.Url -> Nav.Key  -> ( Model, Cmd Msg )
 init fs url key =
     ( Model url key [] 0 "" { score = 0 } stdSection,  Http.send GotSectionsAPI getSections)
 
@@ -52,7 +52,7 @@ update msg m =
         --         Ok flags ->
         --             ( { m | flags = flags }, Cmd.none )
         UrlChanged url ->
-            ({ m | curr_url = url}, Cmd.none)
+             ({ m | curr_url = url}, Cmd.none)
         LinkClicked urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
@@ -79,14 +79,14 @@ update msg m =
                 Err httpError ->
                     let
                         _ =
-                            "foo is"
+                            Debug.log "foo is" httpError
                     in
                         ( m, Cmd.none )
 
                 Ok section ->
                     let
                         _ =
-                            "foo is"
+                            Debug.log "foo is" section
                     in
                         ( { m | curr_section = section }, Cmd.none )
 

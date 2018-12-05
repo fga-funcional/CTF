@@ -40,8 +40,8 @@ type alias Flag =
 
 type alias Section = 
     { flags : List Flag
-    , idSection : Int 
     , name : String   
+    , idSection : Int 
     , expanded : Int
     }
 
@@ -60,12 +60,12 @@ flag color value idFlag answer title captured  descr alert =
 stdFlag =
     flag "white" 0 999999999 "Inexistente" "Nao existe" False "Deu merda" Alert.closed
 
-section : List Flag -> Int -> String -> Int -> Section
-section flags idSection name expand =
-    Section flags idSection name 0
+section : List Flag ->  String -> Int -> Int -> Section
+section flags name idSection expand =
+    Section flags name idSection 0
 
 stdSection =
-    section [stdFlag] 99999999 "Secao inexistente" 0
+    section [stdFlag] "Secao inexistente"  99999999 0
 
 
 
@@ -89,8 +89,8 @@ oneSectionDecoder : D.Decoder (Section)
 oneSectionDecoder = 
     D.map4 section 
     (D.at ["flags"] flagDecoder) 
-    (D.at ["idSection"] D.int)
     (D.at ["name"] D.string)
+    (D.at ["idSection"] D.int)
     (D.succeed 0)
 
 oneFlagDecoder : D.Decoder (Flag)
