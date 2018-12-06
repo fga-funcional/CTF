@@ -103,7 +103,12 @@ view m =
                 , div [ class "flagcontainer" ]
                     [ rowMap (viewFlag m m.response m.curr_section.expanded) m.curr_section.flags
                     ]
-                , div [ class "row" ]
+                ]
+            ]
+        ]
+    }
+
+formPlayer m = div [ class "row" ]
                     [ Html.form
                         [ onSubmit SendPlayer
                         , class "form-container"
@@ -131,11 +136,6 @@ view m =
                             [ text "Submit" ]
                         ]
                     ]
-                ]
-            ]
-        ]
-    }
-
 
 validadeStringfield : String -> Bool
 validadeStringfield s =

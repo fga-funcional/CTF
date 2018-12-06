@@ -89,8 +89,9 @@ update msg m =
                     let
                         _ =
                             "foo is"
+                        p = m.player
                     in
-                        ( { m | curr_section = section }, Cmd.none )
+                        ( { m | curr_section = section, player = {p | score = 0} }, Cmd.none )
 
         Expand i ->
             ( { m | expanded = i }, Cmd.none )
@@ -100,7 +101,7 @@ update msg m =
                 cursec = m.curr_section
                 cursecflags = cursec.flags
             in
-                ({m | curr_section = {cursec | expanded = i, currentFlag = Maybe.withDefault stdFlag <| getElem (i+1) cursec.flags}, sections = updateSectionList m.sections m.curr_section  }, Cmd.none)
+                ({m | curr_section = {cursec | expanded = i, currentFlag = Maybe.withDefault stdFlag <| getElem (i+1) cursec.flags}  }, Cmd.none)
         
         UpdateResponse i st ->
             ( { m | response = st }, Cmd.none )
@@ -128,8 +129,7 @@ update msg m =
                         0
             in
             ( { m | response = "", player = { p | score = p.score + value}, 
-                curr_section = { sec | flags = updateFlagList sec m.response (sec.expanded)},
-                sections = (updateSectionList m.sections sec) }, Cmd.none )
+                curr_section = { sec | flags = updateFlagList sec m.response (sec.expanded)}}, Cmd.none )
         SendPlayer ->
             ( m, savePlayerRequest m )
         SentPlayer result ->
