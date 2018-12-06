@@ -6401,11 +6401,17 @@ var author$project$Pages$CTF$Update$update = F2(
 					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 				} else {
 					var section = result.a;
+					var p = m.b4;
 					var _n6 = 'foo is';
 					return _Utils_Tuple2(
 						_Utils_update(
 							m,
-							{df: section}),
+							{
+								df: section,
+								b4: _Utils_update(
+									p,
+									{cS: 0})
+							}),
 						elm$core$Platform$Cmd$none);
 				}
 			case 3:
@@ -6506,10 +6512,6 @@ var author$project$Pages$CTF$Update$update = F2(
 				}
 		}
 	});
-var author$project$Pages$CTF$Update$SendPlayer = {$: 12};
-var author$project$Pages$CTF$Update$UpdatePlayerAlias = function (a) {
-	return {$: 6, a: a};
-};
 var author$project$Utils$htmlIndexedMap = F4(
 	function (parent, wrapper, func, lst) {
 		var wrap = F3(
@@ -6536,6 +6538,29 @@ var author$project$Pages$CTF$View$rowMap = A2(author$project$Utils$htmlIndexedMa
 var author$project$Pages$CTF$Update$GetOneSectionAPI = function (a) {
 	return {$: 10, a: a};
 };
+var author$project$Pages$CTF$View$getElem = F2(
+	function (index, list) {
+		return (_Utils_cmp(
+			elm$core$List$length(list),
+			index) > -1) ? elm$core$List$head(
+			elm$core$List$reverse(
+				A2(elm$core$List$take, index, list))) : elm$core$Maybe$Nothing;
+	});
+var author$project$Pages$CTF$View$sidebarContentTexts = F2(
+	function (m, id) {
+		return A2(
+			elm$core$Maybe$withDefault,
+			'',
+			A2(
+				author$project$Pages$CTF$View$getElem,
+				id,
+				A2(
+					elm$core$List$map,
+					function ($) {
+						return $.dy;
+					},
+					m.dE)));
+	});
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
@@ -6592,7 +6617,14 @@ var author$project$Pages$CTF$View$sidebarContent = function (m) {
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('Section ' + y)
+								elm$html$Html$text(
+								A2(
+									author$project$Pages$CTF$View$sidebarContentTexts,
+									m,
+									A2(
+										elm$core$Maybe$withDefault,
+										999999,
+										elm$core$String$toInt(y))))
 							]))
 					]));
 		},
@@ -6605,10 +6637,6 @@ var author$project$Pages$CTF$View$sidebarContent = function (m) {
 					return $.ds;
 				},
 				m.dE)));
-};
-var elm$core$String$trim = _String_trim;
-var author$project$Pages$CTF$View$validadeStringfield = function (s) {
-	return (elm$core$String$trim(s) === '') ? true : false;
 };
 var author$project$Pages$CTF$Update$ExpandFlag = F2(
 	function (a, b) {
@@ -7570,16 +7598,13 @@ var author$project$Pages$CTF$View$viewFlag = F5(
 var author$project$Pages$CTF$View$viewScore = function (m) {
 	return 'Score: ' + elm$core$String$fromInt(m.b4.cS);
 };
-var elm$html$Html$form = _VirtualDom_node('form');
 var elm$html$Html$img = _VirtualDom_node('img');
-var elm$html$Html$label = _VirtualDom_node('label');
 var elm$html$Html$Attributes$height = function (n) {
 	return A2(
 		_VirtualDom_attribute,
 		'height',
 		elm$core$String$fromInt(n));
 };
-var elm$html$Html$Attributes$hidden = elm$html$Html$Attributes$boolProperty('hidden');
 var elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
@@ -7591,18 +7616,6 @@ var elm$html$Html$Attributes$width = function (n) {
 		_VirtualDom_attribute,
 		'width',
 		elm$core$String$fromInt(n));
-};
-var elm$html$Html$Events$alwaysPreventDefault = function (msg) {
-	return _Utils_Tuple2(msg, true);
-};
-var elm$html$Html$Events$onSubmit = function (msg) {
-	return A2(
-		elm$html$Html$Events$preventDefaultOn,
-		'submit',
-		A2(
-			elm$json$Json$Decode$map,
-			elm$html$Html$Events$alwaysPreventDefault,
-			elm$json$Json$Decode$succeed(msg)));
 };
 var elm$virtual_dom$VirtualDom$node = function (tag) {
 	return _VirtualDom_node(
@@ -7691,69 +7704,6 @@ var author$project$Pages$CTF$View$view = function (m) {
 										author$project$Pages$CTF$View$rowMap,
 										A3(author$project$Pages$CTF$View$viewFlag, m, m.dC, m.df.cs),
 										m.df.dm)
-									])),
-								A2(
-								elm$html$Html$div,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('row')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$form,
-										_List_fromArray(
-											[
-												elm$html$Html$Events$onSubmit(author$project$Pages$CTF$Update$SendPlayer),
-												elm$html$Html$Attributes$class('form-container')
-											]),
-										_List_fromArray(
-											[
-												A2(
-												elm$html$Html$label,
-												_List_Nil,
-												_List_fromArray(
-													[
-														elm$html$Html$text('Apelido'),
-														A2(
-														elm$html$Html$input,
-														_List_fromArray(
-															[
-																elm$html$Html$Attributes$type_('text'),
-																elm$html$Html$Attributes$placeholder('Apelido'),
-																elm$html$Html$Events$onInput(author$project$Pages$CTF$Update$UpdatePlayerAlias),
-																elm$html$Html$Attributes$value(m.b4.ch)
-															]),
-														_List_Nil)
-													])),
-												A2(
-												elm$html$Html$label,
-												_List_Nil,
-												_List_fromArray(
-													[
-														elm$html$Html$text('Score'),
-														A2(
-														elm$html$Html$input,
-														_List_fromArray(
-															[
-																elm$html$Html$Attributes$value(
-																elm$core$String$fromInt(m.b4.cS)),
-																elm$html$Html$Attributes$hidden(true)
-															]),
-														_List_Nil)
-													])),
-												A2(
-												elm$html$Html$button,
-												_List_fromArray(
-													[
-														elm$html$Html$Attributes$disabled(
-														author$project$Pages$CTF$View$validadeStringfield(m.b4.ch))
-													]),
-												_List_fromArray(
-													[
-														elm$html$Html$text('Submit')
-													]))
-											]))
 									]))
 							]))
 					]))

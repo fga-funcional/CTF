@@ -83,7 +83,9 @@ rowMap =
 
 sidebarContent : Model -> List (Html Msg)
 sidebarContent m =
-    List.map (\y -> p [] [ a [ href "#", onClick (GetOneSectionAPI <| Maybe.withDefault 99999999 <| String.toInt y) ] [ text ("Section " ++ y) ] ]) <| List.map String.fromInt <| List.map .idSection m.sections
+    List.map (\y -> p [] [ a [ href "#", onClick (GetOneSectionAPI <| Maybe.withDefault 99999999 <| String.toInt y) ] [ text (sidebarContentTexts m (Maybe.withDefault 999999 <| String.toInt y)) ] ]) <| List.map String.fromInt <| List.map .idSection m.sections
+
+sidebarContentTexts m id =  Maybe.withDefault "" <| getElem id  <| List.map .name m.sections
 
 
 view : Model -> Browser.Document Msg
@@ -108,34 +110,34 @@ view m =
         ]
     }
 
-formPlayer m = div [ class "row" ]
-                    [ Html.form
-                        [ onSubmit SendPlayer
-                        , class "form-container"
-                        ]
-                        [ label []
-                            [ text "Apelido"
-                            , input
-                                [ type_ "text"
-                                , placeholder "Apelido"
-                                , onInput UpdatePlayerAlias
-                                , value m.player.alias
-                                ]
-                                []
-                            ]
-                        , label []
-                            [ text "Score"
-                            , input
-                                [ value <| String.fromInt m.player.score
-                                , hidden True
-                                ]
-                                []
-                            ]
-                        , button
-                            [disabled <| validadeStringfield m.player.alias ]
-                            [ text "Submit" ]
-                        ]
-                    ]
+-- formPlayer m = div [ class "row" ]
+--                     [ Html.form
+--                         [ onSubmit SendPlayer
+--                         , class "form-container"
+--                         ]
+--                         [ label []
+--                             [ text "Apelido"
+--                             , input
+--                                 [ type_ "text"
+--                                 , placeholder "Apelido"
+--                                 , onInput UpdatePlayerAlias
+--                                 , value m.player.alias
+--                                 ]
+--                                 []
+--                             ]
+--                         , label []
+--                             [ text "Score"
+--                             , input
+--                                 [ value <| String.fromInt m.player.score
+--                                 , hidden True
+--                                 ]
+--                                 []
+--                             ]
+--                         , button
+--                             [disabled <| validadeStringfield m.player.alias ]
+--                             [ text "Submit" ]
+--                         ]
+--                     ]
 
 validadeStringfield : String -> Bool
 validadeStringfield s =
