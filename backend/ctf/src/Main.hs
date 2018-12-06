@@ -61,7 +61,9 @@ getFirstFlag = do
   close conn
 
 mapSectionDB :: SectionDB -> [Flag] -> Section
-mapSectionDB secDB fs = Section (idSectionDB (secDB)) fs (nameDB (secDB))
+mapSectionDB secDB fs = 
+  do
+    Section (idSectionDB (secDB)) (filter (\x -> sectionId x == idSectionDB (secDB)) fs) (nameDB (secDB))
 
   
 getAllSections :: IO [Section]
@@ -69,7 +71,7 @@ getAllSections = do
   conn <- open "ctf.db"
   r <- query_ conn "SELECT * from section" :: IO [SectionDB]
   x <- query_ conn "SELECT * from flag" :: IO [Flag]
-  let s = [(mapSectionDB y x) | y <- r ] -- Mapeia os resultados do Banco pra Section
+  let s = [(mapSectionDB y x) | y  <- r ] -- Mapeia os resultados do Banco pra Section
   return s
  
 data Player = Player
@@ -130,12 +132,8 @@ main = do
     
     get "/sections/:id" $ do
       id <- param "id"
-      json (head $ filter (matchesSectionId id) sections)
+      json (head $ filter (matchesSectionId id) secs)
     
-    get "/sections/:id" $ do
-      id <- param "id"
-      json (filter (matchesFlagId id) example_flags)
-
     post "/ranking" $ do
       player <- jsonData :: ActionM Player
       json player
