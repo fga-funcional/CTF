@@ -47,7 +47,9 @@ type alias Section =
 
 
 type alias Player =
-    { score : Int
+    { 
+        alias : String,
+        score : Int
     }
 
 
@@ -67,6 +69,9 @@ section flags name idSection expand =
 stdSection =
     section [stdFlag] "Secao inexistente"  99999999 0
 
+player : String -> Int -> Player
+player aliasPlayer points = 
+    Player aliasPlayer points
 
 
 ----------------------------
@@ -104,4 +109,16 @@ oneFlagDecoder =
     (D.at ["captured"] D.bool)
     (D.at ["description"] D.string)
     (D.succeed Alert.closed)
-    
+
+playerDecoder : D.Decoder (Player)
+playerDecoder =
+    D.map2 player
+        (D.at ["aliasPlayer"] D.string)
+        (D.at ["points"] D.int)
+
+playerEncoder : Model -> E.Value
+playerEncoder m =
+    E.object
+        [ ( "aliasPlayer", E.string m.player.alias )
+        , ( "points", E.int m.player.score )
+        ]

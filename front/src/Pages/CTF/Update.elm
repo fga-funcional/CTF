@@ -10,7 +10,7 @@ import Browser.Navigation as Nav
 
 init : () -> Url.Url -> Nav.Key  -> ( Model, Cmd Msg )
 init fs url key =
-    ( Model url key [] 0 "" { score = 0 } stdSection,  Http.send GotSectionsAPI getSections)
+    ( Model url key [] 0 "" { alias = "", score = 0 } stdSection,  Http.send GotSectionsAPI getSections)
 
 --------------------------------------------------------------------------------
 -- MESSAGES
@@ -24,6 +24,7 @@ type Msg
     | Expand Int
     | ExpandFlag Section Int
     | UpdateResponse Int String
+    | UpdatePlayerAlias String
     | SendResponse Int Section String
     -- | GetFlagsAPI 
     -- | GotFlagsAPI (Result Http.Error (List Flag))
@@ -31,7 +32,8 @@ type Msg
     | GotSectionsAPI (Result Http.Error (List Section))
     | GetOneSectionAPI Int
     | GotOneSectionAPI (Result Http.Error Section)
-
+    | SendPlayer
+    | SentPlayer (Result Http.Error Player)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg m =
@@ -103,6 +105,13 @@ update msg m =
         UpdateResponse i st ->
             ( { m | response = st }, Cmd.none )
 
+        UpdatePlayerAlias st ->
+            let
+                k = m.player
+            in
+            
+            ( { m | player = { k | alias = st} }, Cmd.none )
+
         -- Pega flag de acordo com o valor de expanded da model. Pode da merda isso.
         SendResponse i sec ans ->
             let
@@ -120,7 +129,22 @@ update msg m =
             ( { m | response = "", player = { p | score = p.score + value}, 
                 curr_section = { sec | flags = updateFlagList sec m.response (sec.expanded)},
                 sections = (updateSectionList m.sections sec) }, Cmd.none )
-
+        SendPlayer ->
+            ( m, Http.send SentPlayer <| savePlayerRequest m )
+        SentPlayer result ->
+            case result of
+                Err httpError ->
+                    let
+                        _ =
+                            Debug.log "foo is" httpError
+                    in
+                        ( m, Cmd.none )
+                Ok player -> 
+                    let
+                        _ =
+                            Debug.log "foo is" player
+                    in
+                        ( m, Cmd.none )
 -- Atualiza lista de secoes com uma nova secao e ja ordena a nova lista de secoes
 updateSectionList : List Section -> Section -> List Section 
 updateSectionList sections curr_sec =
@@ -177,3 +201,8 @@ getOneSection id = Http.get ("http://localhost:3000/sections/" ++ String.fromInt
 
 getOneFlag : Int -> Http.Request (Flag)
 getOneFlag id = Http.get ("http://localhost:3000/flag/" ++ String.fromInt id) oneFlagDecoder
+
+
+savePlayerRequest : Model -> Http.Request (Player)
+savePlayerRequest model =
+    Http.post "http://localhost:3000/ranking" (Http.jsonBody <| playerEncoder model) playerDecoder
