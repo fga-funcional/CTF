@@ -81,14 +81,14 @@ update msg m =
                 Err httpError ->
                     let
                         _ =
-                            Debug.log "foo is" httpError
+                            "foo is"
                     in
                         ( m, Cmd.none )
 
                 Ok section ->
                     let
                         _ =
-                            Debug.log "foo is" section
+                            "foo is"
                     in
                         ( { m | curr_section = section }, Cmd.none )
 
@@ -100,7 +100,7 @@ update msg m =
                 cursec = m.curr_section
                 cursecflags = cursec.flags
             in
-                ({m | curr_section = {cursec | expanded = i} }, Cmd.none)
+                ({m | curr_section = {cursec | expanded = i, currentFlag = Maybe.withDefault stdFlag <| getElem (i+1) cursec.flags}, sections = updateSectionList m.sections m.curr_section  }, Cmd.none)
         
         UpdateResponse i st ->
             ( { m | response = st }, Cmd.none )
@@ -120,9 +120,10 @@ update msg m =
                 k = sec.flags
                 a = Maybe.withDefault stdFlag <| List.head (List.filter(\x -> x.idFlag == i) k)
                 cursec = m.curr_section
+                flor = m.curr_section.currentFlag
                 value = 
-                    if ans == a.answer then
-                        a.value
+                    if ans == flor.answer then
+                        flor.value
                     else
                         0
             in
@@ -136,13 +137,13 @@ update msg m =
                 Err httpError ->
                     let
                         _ =
-                            Debug.log "foo is" httpError
+                            "foo is"
                     in
                         ( m, Cmd.none )
                 Ok player -> 
                     let
                         _ =
-                            Debug.log "foo is" player
+                            "foo is"
                     in
                         ( m, Cmd.none )
 -- Atualiza lista de secoes com uma nova secao e ja ordena a nova lista de secoes
@@ -228,4 +229,16 @@ request model =
         , withCredentials = False
         }  
 
-       
+getElem : Int -> List a -> Maybe a
+getElem index list =
+    -- 3 [ 1, 2, 3, 4, 5, 6 ]
+    if List.length list >= index then
+        List.take index list
+            -- [ 1, 2, 3 ]
+            |> List.reverse
+            -- [ 3, 2, 1 ]
+            |> List.head
+        -- Just 3
+
+    else
+        Nothing
