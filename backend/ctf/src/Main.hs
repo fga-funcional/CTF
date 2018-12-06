@@ -60,12 +60,18 @@ getFirstFlag = do
   mapM_ print r
   close conn
 
-getFirstSection :: IO ()
-getFirstSection = do
+mapSectionDB :: SectionDB -> [Flag] -> Section
+mapSectionDB secDB fs = Section (idSectionDB (secDB)) fs (nameDB (secDB))
+
+  
+getAllSections :: IO [Section]
+getAllSections = do
   conn <- open "ctf.db"
   r <- query_ conn "SELECT * from section" :: IO [SectionDB]
-  mapM_ print r
-  close conn
+  x <- query_ conn "SELECT * from flag" :: IO [Flag]
+  let s = [(mapSectionDB y x) | y <- r ] -- Mapeia os resultados do Banco pra Section
+  return s
+ 
 data Player = Player
   {
     aliasPlayer :: String
@@ -103,6 +109,7 @@ matchesFlagId id flag = idFlag flag == id
 
 main = do
   putStrLn "Starting Server..."
+  secs <- getAllSections
   scotty 3000 $ do
     middleware simpleCors
     get "/" $ do
@@ -119,7 +126,7 @@ main = do
       json example_flags
     
     get "/sections" $ do
-      json sections
+      json secs
     
     get "/sections/:id" $ do
       id <- param "id"
