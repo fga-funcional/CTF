@@ -127,7 +127,7 @@ view m =
                                 []
                             ]
                         , button
-                            []
+                            [disabled <| validadeStringfield m.player.alias ]
                             [ text "Submit" ]
                         ]
                     ]
@@ -136,6 +136,13 @@ view m =
         ]
     }
 
+
+validadeStringfield : String -> Bool
+validadeStringfield s =
+    if String.trim s == "" then
+        True
+    else
+        False
 
 viewScore : Model -> String
 viewScore m =
@@ -193,3 +200,4 @@ flagChildren m response i obj =
         , Button.button [ Button.secondary, Button.onClick (SendResponse i m.curr_section response), Button.disabled obj.captured ] [ text "Send" ]
         ]
     ]
+

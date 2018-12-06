@@ -130,7 +130,7 @@ update msg m =
                 curr_section = { sec | flags = updateFlagList sec m.response (sec.expanded)},
                 sections = (updateSectionList m.sections sec) }, Cmd.none )
         SendPlayer ->
-            ( m, Http.send SentPlayer <| savePlayerRequest m )
+            ( m, savePlayerRequest m )
         SentPlayer result ->
             case result of
                 Err httpError ->
@@ -203,6 +203,29 @@ getOneFlag : Int -> Http.Request (Flag)
 getOneFlag id = Http.get ("http://localhost:3000/flag/" ++ String.fromInt id) oneFlagDecoder
 
 
-savePlayerRequest : Model -> Http.Request (Player)
+savePlayerRequest : Model -> Cmd Msg
 savePlayerRequest model =
-    Http.post "http://localhost:3000/ranking" (Http.jsonBody <| playerEncoder model) playerDecoder
+    let
+        req = request model
+    in
+        Http.send SentPlayer req
+
+
+request : Model -> Http.Request (Player)
+request model =
+    let
+        headers =
+            [ Http.header "Access-Control-Allow-Origin" ""
+            , Http.header "Content-Type" "application/json"
+            ]
+    in
+    Http.request { body = Http.jsonBody <| playerEncoder model  
+        , expect = Http.expectJson playerDecoder
+        , headers = headers
+        , method = "POST"
+        , timeout = Nothing
+        , url = "http://localhost:3000/ranking"
+        , withCredentials = False
+        }  
+
+       
