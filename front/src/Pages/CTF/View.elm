@@ -119,7 +119,7 @@ view m =
                                 []
                             ]
                         , label []
-                            [ text "Password"
+                            [ text "Score"
                             , input
                                 [ value <| String.fromInt m.player.score
                                 , hidden True

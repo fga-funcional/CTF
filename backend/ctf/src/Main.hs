@@ -12,6 +12,10 @@ import Data.Monoid ((<>))
 import GHC.Generics
 import Web.Scotty
 import Network.Wai.Middleware.Cors
+import Database.HDBC.Sqlite3 (connectSqlite3)
+import Database.HDBC
+import Database.SQLite.Simple
+import Database.SQLite.Simple.FromRow
 
 instance ToJSON Flag
 instance FromJSON Flag
@@ -28,6 +32,7 @@ data Flag = Flag
   , color :: String
   , answer :: String
   , captured :: Bool
+  , sectionId :: Int
   } deriving (Show, Generic)
 
 data Section = Section
@@ -36,6 +41,31 @@ data Section = Section
  , name :: String
  } deriving (Show, Generic)
 
+data SectionDB = SectionDB
+ { idSectionDB :: Int
+ , nameDB :: String
+ } deriving (Show, Generic)
+
+instance FromRow Flag where
+  fromRow = Flag <$> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field
+
+instance FromRow SectionDB where
+    fromRow = SectionDB <$> field <*> field
+  
+
+getFirstFlag :: IO ()
+getFirstFlag = do
+  conn <- open "ctf.db"
+  r <- query_ conn "SELECT * from flag" :: IO [Flag]
+  mapM_ print r
+  close conn
+
+getFirstSection :: IO ()
+getFirstSection = do
+  conn <- open "ctf.db"
+  r <- query_ conn "SELECT * from section" :: IO [SectionDB]
+  mapM_ print r
+  close conn
 data Player = Player
   {
     aliasPlayer :: String
@@ -45,12 +75,12 @@ data Player = Player
 
 k= "8320987112741390144276341183223364380754172606361245952449277696409600000000000000"
 example_flags =
-  [ Flag 1 "Fibonacci" "Qual o quinto número de fibonacci?" 1 "white" "5" False
-    , Flag 2 "Factorial" "Qual fatorial de 60?" 2 "white" k False
+  [ Flag 1 "Fibonacci" "Qual o quinto número de fibonacci?" 1 "white" "5" False 1
+    , Flag 2 "Factorial" "Qual fatorial de 60?" 2 "white" k False 1
   ]
 
 example_flags2 =
-  [ Flag 1 "ieaofiaeo" "Qual o quinto número de fibonacci?" 1 "white" "5" False
+  [ Flag 1 "ieaofiaeo" "Qual o quinto número de fibonacci?" 1 "white" "5" False 1
   ]
   
 sections = 
