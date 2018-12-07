@@ -5706,7 +5706,7 @@ var elm$http$Http$get = F2(
 				dO: false
 			});
 	});
-var author$project$Pages$CTF$Update$getSections = A2(elm$http$Http$get, 'http://localhost:3000/sections', author$project$Pages$CTF$Model$sectionDecoder);
+var author$project$Pages$CTF$Update$getSections = A2(elm$http$Http$get, 'http://localhost:8080/api/sections', author$project$Pages$CTF$Model$sectionDecoder);
 var elm$core$Basics$composeL = F3(
 	function (g, f, x) {
 		return g(
@@ -5989,7 +5989,7 @@ var author$project$Pages$CTF$Update$getElem = F2(
 var author$project$Pages$CTF$Update$getOneSection = function (id) {
 	return A2(
 		elm$http$Http$get,
-		'http://localhost:3000/sections/' + elm$core$String$fromInt(id),
+		'http://localhost:8080/api/sections/' + elm$core$String$fromInt(id),
 		author$project$Pages$CTF$Model$oneSectionDecoder);
 };
 var author$project$Pages$CTF$Update$SentPlayer = function (a) {
@@ -6073,7 +6073,7 @@ var author$project$Pages$CTF$Update$request = function (model) {
 			dn: headers,
 			dx: 'POST',
 			dI: elm$core$Maybe$Nothing,
-			dL: 'http://localhost:3000/ranking',
+			dL: 'http://localhost:8080/api/ranking',
 			dO: false
 		});
 };
@@ -6512,6 +6512,156 @@ var author$project$Pages$CTF$Update$update = F2(
 				}
 		}
 	});
+var author$project$Pages$CTF$Update$SendPlayer = {$: 12};
+var author$project$Pages$CTF$Update$UpdatePlayerAlias = function (a) {
+	return {$: 6, a: a};
+};
+var elm$core$String$trim = _String_trim;
+var author$project$Pages$CTF$View$validadeStringfield = function (s) {
+	return (elm$core$String$trim(s) === '') ? true : false;
+};
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$form = _VirtualDom_node('form');
+var elm$html$Html$input = _VirtualDom_node('input');
+var elm$html$Html$label = _VirtualDom_node('label');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var elm$html$Html$Attributes$hidden = elm$html$Html$Attributes$boolProperty('hidden');
+var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
+var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
+var elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 1, a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var elm$html$Html$Events$targetValue = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	elm$json$Json$Decode$string);
+var elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			elm$json$Json$Decode$map,
+			elm$html$Html$Events$alwaysStop,
+			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
+};
+var elm$html$Html$Events$alwaysPreventDefault = function (msg) {
+	return _Utils_Tuple2(msg, true);
+};
+var elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 2, a: a};
+};
+var elm$html$Html$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var elm$html$Html$Events$onSubmit = function (msg) {
+	return A2(
+		elm$html$Html$Events$preventDefaultOn,
+		'submit',
+		A2(
+			elm$json$Json$Decode$map,
+			elm$html$Html$Events$alwaysPreventDefault,
+			elm$json$Json$Decode$succeed(msg)));
+};
+var author$project$Pages$CTF$View$formPlayer = function (m) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('row')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$form,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onSubmit(author$project$Pages$CTF$Update$SendPlayer),
+						elm$html$Html$Attributes$class('form-container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$label,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Apelido '),
+								A2(
+								elm$html$Html$input,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$type_('text'),
+										elm$html$Html$Attributes$placeholder('Apelido'),
+										elm$html$Html$Events$onInput(author$project$Pages$CTF$Update$UpdatePlayerAlias),
+										elm$html$Html$Attributes$value(m.b4.ch)
+									]),
+								_List_Nil)
+							])),
+						A2(
+						elm$html$Html$label,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$input,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$value(
+										elm$core$String$fromInt(m.b4.cS)),
+										elm$html$Html$Attributes$hidden(true)
+									]),
+								_List_Nil)
+							])),
+						A2(
+						elm$html$Html$button,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$disabled(
+								author$project$Pages$CTF$View$validadeStringfield(m.b4.ch))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Submit')
+							]))
+					]))
+			]));
+};
 var author$project$Utils$htmlIndexedMap = F4(
 	function (parent, wrapper, func, lst) {
 		var wrap = F3(
@@ -6532,7 +6682,6 @@ var author$project$Utils$htmlIndexedMap = F4(
 				wrap(func),
 				lst));
 	});
-var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$p = _VirtualDom_node('p');
 var author$project$Pages$CTF$View$rowMap = A2(author$project$Utils$htmlIndexedMap, elm$html$Html$div, elm$html$Html$p);
 var author$project$Pages$CTF$Update$GetOneSectionAPI = function (a) {
@@ -6562,15 +6711,6 @@ var author$project$Pages$CTF$View$sidebarContentTexts = F2(
 					m.dE)));
 	});
 var elm$html$Html$a = _VirtualDom_node('a');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
 var elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
@@ -6580,7 +6720,6 @@ var elm$html$Html$Attributes$href = function (url) {
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 0, a: a};
 };
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$on = F2(
 	function (event, decoder) {
 		return A2(
@@ -6665,7 +6804,6 @@ var rundis$elm_bootstrap$Bootstrap$Alert$children = F2(
 var rundis$elm_bootstrap$Bootstrap$Internal$Role$Secondary = 1;
 var rundis$elm_bootstrap$Bootstrap$Alert$config = {aH: _List_Nil, cl: _List_Nil, w: elm$core$Maybe$Nothing, bw: 1, e: 0, E: false};
 var elm$html$Html$h4 = _VirtualDom_node('h4');
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var rundis$elm_bootstrap$Bootstrap$Alert$headingPrivate = F3(
 	function (elemFn, attributes, children_) {
 		return A2(
@@ -6691,7 +6829,6 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Role$Info = 3;
 var rundis$elm_bootstrap$Bootstrap$Alert$info = function (conf) {
 	return A2(rundis$elm_bootstrap$Bootstrap$Alert$role, 3, rundis$elm_bootstrap$Bootstrap$Alert$config);
 };
-var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
@@ -6701,7 +6838,6 @@ var elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
-var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var rundis$elm_bootstrap$Bootstrap$Alert$StartClose = 1;
 var rundis$elm_bootstrap$Bootstrap$Alert$clickHandler = F2(
 	function (visibility, configRec) {
@@ -6895,45 +7031,7 @@ var author$project$Pages$CTF$View$updateFlagAlert = function (obj) {
 			rundis$elm_bootstrap$Bootstrap$Alert$info(rundis$elm_bootstrap$Bootstrap$Alert$config)));
 };
 var elm$html$Html$h2 = _VirtualDom_node('h2');
-var elm$html$Html$input = _VirtualDom_node('input');
-var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
 var elm$html$Html$Attributes$readonly = elm$html$Html$Attributes$boolProperty('readOnly');
-var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
-var elm$html$Html$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 1, a: a};
-};
-var elm$html$Html$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var elm$html$Html$Events$targetValue = A2(
-	elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	elm$json$Json$Decode$string);
-var elm$html$Html$Events$onInput = function (tagger) {
-	return A2(
-		elm$html$Html$Events$stopPropagationOn,
-		'input',
-		A2(
-			elm$json$Json$Decode$map,
-			elm$html$Html$Events$alwaysStop,
-			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
-};
 var elm$core$Maybe$andThen = F2(
 	function (callback, maybeValue) {
 		if (!maybeValue.$) {
@@ -6943,7 +7041,6 @@ var elm$core$Maybe$andThen = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
 var rundis$elm_bootstrap$Bootstrap$General$Internal$screenSizeOption = function (size) {
 	switch (size) {
 		case 0:
@@ -7081,16 +7178,6 @@ var rundis$elm_bootstrap$Bootstrap$Internal$Button$Disabled = function (a) {
 var rundis$elm_bootstrap$Bootstrap$Button$disabled = function (disabled_) {
 	return rundis$elm_bootstrap$Bootstrap$Internal$Button$Disabled(disabled_);
 };
-var elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
-	return {$: 2, a: a};
-};
-var elm$html$Html$Events$preventDefaultOn = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
-	});
 var rundis$elm_bootstrap$Bootstrap$Internal$Button$Attrs = function (a) {
 	return {$: 4, a: a};
 };
@@ -7683,6 +7770,7 @@ var author$project$Pages$CTF$View$view = function (m) {
 									]),
 								_List_fromArray(
 									[
+										author$project$Pages$CTF$View$formPlayer(m),
 										A2(
 										elm$html$Html$p,
 										_List_Nil,

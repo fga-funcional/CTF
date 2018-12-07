@@ -190,18 +190,18 @@ updateFlag ans f =
 
 getFlags : Http.Request (List Flag)
 getFlags =
-  Http.get "http://localhost:3000/flags" (flagDecoder)
+  Http.get "http://localhost:8080/api/flags" (flagDecoder)
 
 getSections : Http.Request (List Section)
 getSections =
-  Http.get "http://localhost:3000/sections" (sectionDecoder)
+  Http.get "http://localhost:8080/api/sections" (sectionDecoder)
 
 
 getOneSection : Int -> Http.Request (Section)
-getOneSection id = Http.get ("http://localhost:3000/sections/" ++ String.fromInt id) oneSectionDecoder
+getOneSection id = Http.get ("http://localhost:8080/api/sections/" ++ String.fromInt id) oneSectionDecoder
 
 getOneFlag : Int -> Http.Request (Flag)
-getOneFlag id = Http.get ("http://localhost:3000/flag/" ++ String.fromInt id) oneFlagDecoder
+getOneFlag id = Http.get ("http://localhost:8080/api/flag/" ++ String.fromInt id) oneFlagDecoder
 
 
 savePlayerRequest : Model -> Cmd Msg
@@ -225,7 +225,7 @@ request model =
         , headers = headers
         , method = "POST"
         , timeout = Nothing
-        , url = "http://localhost:3000/ranking"
+        , url = "http://localhost:8080/api/ranking"
         , withCredentials = False
         }  
 

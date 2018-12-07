@@ -5,6 +5,7 @@ module Main where
 import Web.Scotty
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Aeson.Types
+import Data.Convertible
 import qualified Data.Char as C
 import qualified Data.Text as T
 import Data.HashMap.Strict (fromList)
@@ -46,11 +47,20 @@ data SectionDB = SectionDB
  , nameDB :: String
  } deriving (Show, Generic)
 
+data Player = Player
+  {
+    aliasPlayer :: String
+    , points :: Int
+  } deriving (Show, Generic)
+
 instance FromRow Flag where
   fromRow = Flag <$> field <*> field <*> field <*> field <*> field <*> field <*> field <*> field
 
 instance FromRow SectionDB where
     fromRow = SectionDB <$> field <*> field
+
+instance FromRow Player where
+  fromRow = Player <$> field <*> field
   
 
 getFirstFlag :: IO ()
@@ -64,7 +74,6 @@ mapSectionDB :: SectionDB -> [Flag] -> Section
 mapSectionDB secDB fs = 
   do
     Section (idSectionDB (secDB)) (filter (\x -> sectionId x == idSectionDB (secDB)) fs) (nameDB (secDB))
-
   
 getAllSections :: IO [Section]
 getAllSections = do
@@ -73,12 +82,13 @@ getAllSections = do
   x <- query_ conn "SELECT * from flag" :: IO [Flag]
   let s = [(mapSectionDB y x) | y  <- r ] -- Mapeia os resultados do Banco pra Section
   return s
- 
-data Player = Player
-  {
-    aliasPlayer :: String
-    , points :: Int
-  } deriving (Show, Generic)
+
+getAllFlags = do
+  conn <- connectSqlite3 "ctf.db"
+  r <- quickQuery' conn "SELECT * from flag where idFlag = ?"[toSql $ toInteger $ 1]
+  let a = head $ head r
+  let b = (fromSql a) :: Int -- Mapeamento de SqlValue pra base type 
+  print b
 
 
 k= "8320987112741390144276341183223364380754172606361245952449277696409600000000000000"
@@ -135,5 +145,6 @@ main = do
       json (head $ filter (matchesSectionId id) secs)
     
     post "/ranking" $ do
+      -- addHeader "Access-Control-Allow-Origin" "http://localhost:8000"
       player <- jsonData :: ActionM Player
       json player
