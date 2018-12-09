@@ -51,6 +51,17 @@ h1 {
   height: 100%;
   padding-top: 50px; }
 
+.rankcontainer {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+  align-content: center;
+  max-width: 500px;
+  height: 100%;
+  padding-top: 50px; }
+
 @media (min-width: 768px) {
   .container {
     width: 750px; } }

@@ -7,6 +7,7 @@ import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 import Bootstrap.Form as Form
 import Bootstrap.Form.Checkbox as Checkbox
+import Bootstrap.Utilities.Display as Display
 import Bootstrap.Form.Input as Input
 import Bootstrap.ListGroup as ListGroup
 import Browser exposing (..)
@@ -100,20 +101,29 @@ view m =
             [ CDN.stylesheet
             , div [ class "topnav" ] [ img [ src "image.jpeg", width 175, height 60 ] [] ]
             , div [ class "container" ]
-                [ div [ class "sidenav" ] (sidebarContent m)
+                [ div [ class "sidenav" ] (List.append (sidebarContent m) <| [button[onClick ChangeRank][text "Mostrar rank"]])
                 , div [ class "score" ]
                     [ formPlayer m
                     , p []
                         [ text (viewScore m)
                         ]
                     ]
-                , div [ class "flagcontainer" ]
+                , div[class "rankcontainer", style "display" m.showRank] [
+                    tableRanking m
+                ], div [ class "flagcontainer", style "display" (m.showFlags)]
                     [rowMap (viewFlag m m.response m.curr_section.expanded) m.curr_section.flags]
                 ]
             ]
         ]
     }
 
+
+
+tableRanking m = 
+    table [ class "table table-striped", align "center"]
+            (List.map (\x -> tr [] [td [] [text x.alias],
+                td[] [text <| String.fromInt x.score] ]) m.ranking)
+            
 formPlayer m = div [ class "row" ]
                     [ Html.form
                         [ onSubmit SendPlayer

@@ -24,6 +24,9 @@ type alias Model =
     , response : String
     , player : Player
     , curr_section : Section
+    , ranking : List Player 
+    , showRank : String
+    , showFlags : String
     }
 
 
@@ -111,6 +114,10 @@ oneFlagDecoder =
     (D.at ["captured"] D.bool)
     (D.at ["description"] D.string)
     (D.succeed Alert.closed)
+
+allPlayerDecoder : D.Decoder (List Player)
+allPlayerDecoder =
+    D.list (playerDecoder)
 
 playerDecoder : D.Decoder (Player)
 playerDecoder =

@@ -10,7 +10,7 @@ import Browser.Navigation as Nav
 
 init : () -> Url.Url -> Nav.Key  -> ( Model, Cmd Msg )
 init fs url key =
-    ( Model url key [] 0 "" { alias = "", score = 0 } stdSection,  Http.send GotSectionsAPI getSections)
+    ( Model url key [] 0 "" { alias = "", score = 0 } stdSection [] "none" "block",  Cmd.batch [Http.send GotSectionsAPI getSections, Http.send GotRanking getRanking] )
 
 --------------------------------------------------------------------------------
 -- MESSAGES
@@ -32,8 +32,11 @@ type Msg
     | GotSectionsAPI (Result Http.Error (List Section))
     | GetOneSectionAPI Int
     | GotOneSectionAPI (Result Http.Error Section)
+    | GetRanking
+    | GotRanking (Result Http.Error (List Player))
     | SendPlayer
     | SentPlayer (Result Http.Error Player)
+    | ChangeRank
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg m =
@@ -74,6 +77,19 @@ update msg m =
 
                 Ok sections ->
                     ( { m | sections = sections, curr_section = Maybe.withDefault stdSection (List.head sections) }, Cmd.none )
+        GetRanking ->
+            (m, Http.send GotRanking getRanking)
+        GotRanking result->
+            case result of
+                Err httpError ->
+                    let
+                        _ =
+                            "foo is"
+                    in
+                        ( m, Cmd.none )
+
+                Ok ranking ->
+                    ( { m | ranking = ranking}, Cmd.none )
         GetOneSectionAPI id ->
             ( m, Http.send GotOneSectionAPI (getOneSection id))
         GotOneSectionAPI result ->
@@ -146,6 +162,12 @@ update msg m =
                             "foo is"
                     in
                         ( m, Cmd.none )
+        ChangeRank ->   
+            case m.showRank of
+                "none" -> 
+                    ({m | showRank = "block", showFlags = "none"}, Cmd.none)
+                "block" -> ({m | showRank = "none", showFlags = "block"}, Cmd.none)
+                _ -> ({m | showRank = "none", showFlags = "block"}, Cmd.none)
 -- Atualiza lista de secoes com uma nova secao e ja ordena a nova lista de secoes
 updateSectionList : List Section -> Section -> List Section 
 updateSectionList sections curr_sec =
@@ -203,6 +225,7 @@ getOneSection id = Http.get ("http://localhost:8080/api/sections/" ++ String.fro
 getOneFlag : Int -> Http.Request (Flag)
 getOneFlag id = Http.get ("http://localhost:8080/api/flag/" ++ String.fromInt id) oneFlagDecoder
 
+getRanking = Http.get ("http://localhost:8080/api/ranking") allPlayerDecoder
 
 savePlayerRequest : Model -> Cmd Msg
 savePlayerRequest model =

@@ -92,6 +92,14 @@ getAllSections = do
   let s = [(mapSectionDB y x) | y  <- r ] -- Mapeia os resultados do Banco pra Section
   return s
 
+getPlayers :: IO [Player]
+getPlayers = do
+  conn <- open "ctf.db"
+  r <- query_ conn "SELECT * from player" :: IO [Player]
+  close conn
+  return r
+  
+
 getAllFlags = do
   conn <- connectSqlite3 "ctf.db"
   r <- quickQuery' conn "SELECT * from flag where idFlag = ?"[toSql $ toInteger $ 1]
@@ -131,6 +139,7 @@ matchesFlagId id flag = idFlag flag == id
 main = do
   putStrLn "Starting Server..."
   secs <- getAllSections
+  players <- getPlayers
   scotty 3000 $ do
     middleware simpleCors
     get "/" $ do
@@ -149,6 +158,9 @@ main = do
     get "/sections" $ do
       json secs
     
+    get "/ranking" $ do
+      json players
+
     get "/sections/:id" $ do
       id <- param "id"
       json (head $ filter (matchesSectionId id) secs)

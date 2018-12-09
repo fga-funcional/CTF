@@ -1842,8 +1842,8 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 		flagDecoder,
 		args,
 		impl.du,
+		impl.dN,
 		impl.dK,
-		impl.dH,
 		function() { return function() {} }
 	);
 });
@@ -2320,11 +2320,11 @@ var _Http_toTask = F2(function(request, maybeProgress)
 
 		try
 		{
-			xhr.open(request.dx, request.dL, true);
+			xhr.open(request.dx, request.dO, true);
 		}
 		catch (e)
 		{
-			return callback(_Scheduler_fail(elm$http$Http$BadUrl(request.dL)));
+			return callback(_Scheduler_fail(elm$http$Http$BadUrl(request.dO)));
 		}
 
 		_Http_configureRequest(xhr, request);
@@ -2366,9 +2366,9 @@ function _Http_configureRequest(xhr, request)
 	}
 
 	xhr.responseType = request.dk.b;
-	xhr.withCredentials = request.dO;
+	xhr.withCredentials = request.dR;
 
-	elm$core$Maybe$isJust(request.dI) && (xhr.timeout = request.dI.a);
+	elm$core$Maybe$isJust(request.dL) && (xhr.timeout = request.dL.a);
 }
 
 
@@ -2400,8 +2400,8 @@ function _Http_handleResponse(xhr, responseToResult)
 function _Http_toResponse(xhr)
 {
 	return {
-		dL: xhr.responseURL,
-		dG: { db: xhr.status, r: xhr.statusText },
+		dO: xhr.responseURL,
+		dJ: { db: xhr.status, r: xhr.statusText },
 		dn: _Http_parseHeaders(xhr.getAllResponseHeaders()),
 		c6: xhr.response
 	};
@@ -4050,10 +4050,10 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 		flagDecoder,
 		args,
 		impl.du,
+		impl.dN,
 		impl.dK,
-		impl.dH,
 		function(sendToApp, initialModel) {
-			var view = impl.dN;
+			var view = impl.dQ;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -4086,11 +4086,11 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		flagDecoder,
 		args,
 		impl.du,
+		impl.dN,
 		impl.dK,
-		impl.dH,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.aj && impl.aj(sendToApp)
-			var view = impl.dN;
+			var view = impl.dQ;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -4103,7 +4103,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.dJ) && (_VirtualDom_doc.title = title = doc.dJ);
+				(title !== doc.dM) && (_VirtualDom_doc.title = title = doc.dM);
 			});
 		}
 	);
@@ -4189,9 +4189,9 @@ function _Browser_application(impl)
 		{
 			return A3(impl.du, flags, _Browser_getUrl(), key);
 		},
+		dQ: impl.dQ,
 		dN: impl.dN,
-		dK: impl.dK,
-		dH: impl.dH
+		dK: impl.dK
 	});
 }
 
@@ -4957,10 +4957,27 @@ var author$project$Pages$CTF$Update$LinkClicked = function (a) {
 var author$project$Pages$CTF$Update$UrlChanged = function (a) {
 	return {$: 1, a: a};
 };
-var author$project$Pages$CTF$Model$Model = F7(
-	function (curr_url, key, sections, expanded, response, player, curr_section) {
-		return {df: curr_section, dg: curr_url, cs: expanded, dv: key, b4: player, dC: response, dE: sections};
-	});
+var author$project$Pages$CTF$Model$Model = function (curr_url) {
+	return function (key) {
+		return function (sections) {
+			return function (expanded) {
+				return function (response) {
+					return function (player) {
+						return function (curr_section) {
+							return function (ranking) {
+								return function (showRank) {
+									return function (showFlags) {
+										return {df: curr_section, dg: curr_url, cs: expanded, dv: key, b4: player, dC: ranking, dD: response, dF: sections, dG: showFlags, dH: showRank};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var author$project$Pages$CTF$Model$Section = F5(
 	function (flags, name, idSection, expanded, currentFlag) {
 		return {dh: currentFlag, cs: expanded, dm: flags, ds: idSection, dy: name};
@@ -4974,7 +4991,7 @@ var author$project$Pages$CTF$Model$section = F5(
 	});
 var author$project$Pages$CTF$Model$Flag = F8(
 	function (color, value, idFlag, answer, title, captured, description, alert) {
-		return {c3: alert, c4: answer, c9: captured, dc: color, di: description, dr: idFlag, dJ: title, dM: value};
+		return {c3: alert, c4: answer, c9: captured, dc: color, di: description, dr: idFlag, dM: title, dP: value};
 	});
 var rundis$elm_bootstrap$Bootstrap$Alert$Closed = 3;
 var rundis$elm_bootstrap$Bootstrap$Alert$closed = 3;
@@ -4984,9 +5001,20 @@ var author$project$Pages$CTF$Model$flag = F8(
 	});
 var author$project$Pages$CTF$Model$stdFlag = A8(author$project$Pages$CTF$Model$flag, 'white', 0, 999999999, 'Inexistente', 'Nao existe', false, 'Deu merda', rundis$elm_bootstrap$Bootstrap$Alert$closed);
 var author$project$Pages$CTF$Model$stdSection = A5(author$project$Pages$CTF$Model$section, _List_Nil, 'Secao inexistente', 99999999, -1, author$project$Pages$CTF$Model$stdFlag);
+var author$project$Pages$CTF$Update$GotRanking = function (a) {
+	return {$: 13, a: a};
+};
 var author$project$Pages$CTF$Update$GotSectionsAPI = function (a) {
 	return {$: 9, a: a};
 };
+var author$project$Pages$CTF$Model$Player = F2(
+	function (alias, score) {
+		return {ch: alias, cS: score};
+	});
+var author$project$Pages$CTF$Model$player = F2(
+	function (aliasPlayer, points) {
+		return A2(author$project$Pages$CTF$Model$Player, aliasPlayer, points);
+	});
 var elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
 		if (!ls.b) {
@@ -5047,74 +5075,24 @@ var elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
 		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
 	});
-var elm$json$Json$Decode$bool = _Json_decodeBool;
 var elm$json$Json$Decode$int = _Json_decodeInt;
-var elm$json$Json$Decode$map8 = _Json_map8;
+var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$string = _Json_decodeString;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var author$project$Pages$CTF$Model$oneFlagDecoder = A9(
-	elm$json$Json$Decode$map8,
-	author$project$Pages$CTF$Model$flag,
+var author$project$Pages$CTF$Model$playerDecoder = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Pages$CTF$Model$player,
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
-			['color']),
+			['aliasPlayer']),
 		elm$json$Json$Decode$string),
 	A2(
 		elm$json$Json$Decode$at,
 		_List_fromArray(
-			['value']),
-		elm$json$Json$Decode$int),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['idFlag']),
-		elm$json$Json$Decode$int),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['answer']),
-		elm$json$Json$Decode$string),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['title']),
-		elm$json$Json$Decode$string),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['captured']),
-		elm$json$Json$Decode$bool),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['description']),
-		elm$json$Json$Decode$string),
-	elm$json$Json$Decode$succeed(rundis$elm_bootstrap$Bootstrap$Alert$closed));
+			['points']),
+		elm$json$Json$Decode$int));
 var elm$json$Json$Decode$list = _Json_decodeList;
-var author$project$Pages$CTF$Model$flagDecoder = elm$json$Json$Decode$list(author$project$Pages$CTF$Model$oneFlagDecoder);
-var elm$json$Json$Decode$map5 = _Json_map5;
-var author$project$Pages$CTF$Model$oneSectionDecoder = A6(
-	elm$json$Json$Decode$map5,
-	author$project$Pages$CTF$Model$section,
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['flags']),
-		author$project$Pages$CTF$Model$flagDecoder),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['name']),
-		elm$json$Json$Decode$string),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['idSection']),
-		elm$json$Json$Decode$int),
-	elm$json$Json$Decode$succeed(-1),
-	elm$json$Json$Decode$succeed(author$project$Pages$CTF$Model$stdFlag));
-var author$project$Pages$CTF$Model$sectionDecoder = elm$json$Json$Decode$list(author$project$Pages$CTF$Model$oneSectionDecoder);
+var author$project$Pages$CTF$Model$allPlayerDecoder = elm$json$Json$Decode$list(author$project$Pages$CTF$Model$playerDecoder);
 var elm$http$Http$Internal$EmptyBody = {$: 0};
 var elm$http$Http$emptyBody = elm$http$Http$Internal$EmptyBody;
 var elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
@@ -5701,12 +5679,79 @@ var elm$http$Http$get = F2(
 				dk: elm$http$Http$expectJson(decoder),
 				dn: _List_Nil,
 				dx: 'GET',
-				dI: elm$core$Maybe$Nothing,
-				dL: url,
-				dO: false
+				dL: elm$core$Maybe$Nothing,
+				dO: url,
+				dR: false
 			});
 	});
+var author$project$Pages$CTF$Update$getRanking = A2(elm$http$Http$get, 'http://localhost:8080/api/ranking', author$project$Pages$CTF$Model$allPlayerDecoder);
+var elm$json$Json$Decode$bool = _Json_decodeBool;
+var elm$json$Json$Decode$map8 = _Json_map8;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var author$project$Pages$CTF$Model$oneFlagDecoder = A9(
+	elm$json$Json$Decode$map8,
+	author$project$Pages$CTF$Model$flag,
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['color']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['value']),
+		elm$json$Json$Decode$int),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['idFlag']),
+		elm$json$Json$Decode$int),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['answer']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['title']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['captured']),
+		elm$json$Json$Decode$bool),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['description']),
+		elm$json$Json$Decode$string),
+	elm$json$Json$Decode$succeed(rundis$elm_bootstrap$Bootstrap$Alert$closed));
+var author$project$Pages$CTF$Model$flagDecoder = elm$json$Json$Decode$list(author$project$Pages$CTF$Model$oneFlagDecoder);
+var elm$json$Json$Decode$map5 = _Json_map5;
+var author$project$Pages$CTF$Model$oneSectionDecoder = A6(
+	elm$json$Json$Decode$map5,
+	author$project$Pages$CTF$Model$section,
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['flags']),
+		author$project$Pages$CTF$Model$flagDecoder),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['name']),
+		elm$json$Json$Decode$string),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['idSection']),
+		elm$json$Json$Decode$int),
+	elm$json$Json$Decode$succeed(-1),
+	elm$json$Json$Decode$succeed(author$project$Pages$CTF$Model$stdFlag));
+var author$project$Pages$CTF$Model$sectionDecoder = elm$json$Json$Decode$list(author$project$Pages$CTF$Model$oneSectionDecoder);
 var author$project$Pages$CTF$Update$getSections = A2(elm$http$Http$get, 'http://localhost:8080/api/sections', author$project$Pages$CTF$Model$sectionDecoder);
+var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Basics$composeL = F3(
 	function (g, f, x) {
 		return g(
@@ -5828,16 +5873,14 @@ var elm$http$Http$send = F2(
 var author$project$Pages$CTF$Update$init = F3(
 	function (fs, url, key) {
 		return _Utils_Tuple2(
-			A7(
-				author$project$Pages$CTF$Model$Model,
-				url,
-				key,
-				_List_Nil,
-				0,
-				'',
-				{ch: '', cS: 0},
-				author$project$Pages$CTF$Model$stdSection),
-			A2(elm$http$Http$send, author$project$Pages$CTF$Update$GotSectionsAPI, author$project$Pages$CTF$Update$getSections));
+			author$project$Pages$CTF$Model$Model(url)(key)(_List_Nil)(0)('')(
+				{ch: '', cS: 0})(author$project$Pages$CTF$Model$stdSection)(_List_Nil)('none')('block'),
+			elm$core$Platform$Cmd$batch(
+				_List_fromArray(
+					[
+						A2(elm$http$Http$send, author$project$Pages$CTF$Update$GotSectionsAPI, author$project$Pages$CTF$Update$getSections),
+						A2(elm$http$Http$send, author$project$Pages$CTF$Update$GotRanking, author$project$Pages$CTF$Update$getRanking)
+					])));
 	});
 var author$project$Pages$CTF$Update$GotOneSectionAPI = function (a) {
 	return {$: 11, a: a};
@@ -5993,30 +6036,8 @@ var author$project$Pages$CTF$Update$getOneSection = function (id) {
 		author$project$Pages$CTF$Model$oneSectionDecoder);
 };
 var author$project$Pages$CTF$Update$SentPlayer = function (a) {
-	return {$: 13, a: a};
+	return {$: 15, a: a};
 };
-var author$project$Pages$CTF$Model$Player = F2(
-	function (alias, score) {
-		return {ch: alias, cS: score};
-	});
-var author$project$Pages$CTF$Model$player = F2(
-	function (aliasPlayer, points) {
-		return A2(author$project$Pages$CTF$Model$Player, aliasPlayer, points);
-	});
-var elm$json$Json$Decode$map2 = _Json_map2;
-var author$project$Pages$CTF$Model$playerDecoder = A3(
-	elm$json$Json$Decode$map2,
-	author$project$Pages$CTF$Model$player,
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['aliasPlayer']),
-		elm$json$Json$Decode$string),
-	A2(
-		elm$json$Json$Decode$at,
-		_List_fromArray(
-			['points']),
-		elm$json$Json$Decode$int));
 var elm$json$Json$Encode$int = _Json_wrap;
 var elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
@@ -6072,9 +6093,9 @@ var author$project$Pages$CTF$Update$request = function (model) {
 			dk: elm$http$Http$expectJson(author$project$Pages$CTF$Model$playerDecoder),
 			dn: headers,
 			dx: 'POST',
-			dI: elm$core$Maybe$Nothing,
-			dL: 'http://localhost:8080/api/ranking',
-			dO: false
+			dL: elm$core$Maybe$Nothing,
+			dO: 'http://localhost:8080/api/ranking',
+			dR: false
 		});
 };
 var author$project$Pages$CTF$Update$savePlayerRequest = function (model) {
@@ -6287,7 +6308,6 @@ var elm$core$Maybe$withDefault = F2(
 			return _default;
 		}
 	});
-var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -6381,8 +6401,26 @@ var author$project$Pages$CTF$Update$update = F2(
 									elm$core$Maybe$withDefault,
 									author$project$Pages$CTF$Model$stdSection,
 									elm$core$List$head(sections)),
-								dE: sections
+								dF: sections
 							}),
+						elm$core$Platform$Cmd$none);
+				}
+			case 12:
+				return _Utils_Tuple2(
+					m,
+					A2(elm$http$Http$send, author$project$Pages$CTF$Update$GotRanking, author$project$Pages$CTF$Update$getRanking));
+			case 13:
+				var result = msg.a;
+				if (result.$ === 1) {
+					var httpError = result.a;
+					var _n5 = 'foo is';
+					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
+				} else {
+					var ranking = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							m,
+							{dC: ranking}),
 						elm$core$Platform$Cmd$none);
 				}
 			case 10:
@@ -6397,12 +6435,12 @@ var author$project$Pages$CTF$Update$update = F2(
 				var result = msg.a;
 				if (result.$ === 1) {
 					var httpError = result.a;
-					var _n5 = 'foo is';
+					var _n7 = 'foo is';
 					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 				} else {
 					var section = result.a;
 					var p = m.b4;
-					var _n6 = 'foo is';
+					var _n8 = 'foo is';
 					return _Utils_Tuple2(
 						_Utils_update(
 							m,
@@ -6447,7 +6485,7 @@ var author$project$Pages$CTF$Update$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						m,
-						{dC: st}),
+						{dD: st}),
 					elm$core$Platform$Cmd$none);
 			case 6:
 				var st = msg.a;
@@ -6468,7 +6506,7 @@ var author$project$Pages$CTF$Update$update = F2(
 				var p = m.b4;
 				var k = sec.dm;
 				var flor = m.df.dh;
-				var value = _Utils_eq(ans, flor.c4) ? flor.dM : 0;
+				var value = _Utils_eq(ans, flor.c4) ? flor.dP : 0;
 				var cursec = m.df;
 				var a = A2(
 					elm$core$Maybe$withDefault,
@@ -6487,32 +6525,55 @@ var author$project$Pages$CTF$Update$update = F2(
 							df: _Utils_update(
 								sec,
 								{
-									dm: A3(author$project$Pages$CTF$Update$updateFlagList, sec, m.dC, sec.cs)
+									dm: A3(author$project$Pages$CTF$Update$updateFlagList, sec, m.dD, sec.cs)
 								}),
 							b4: _Utils_update(
 								p,
 								{cS: p.cS + value}),
-							dC: ''
+							dD: ''
 						}),
 					elm$core$Platform$Cmd$none);
-			case 12:
+			case 14:
 				return _Utils_Tuple2(
 					m,
 					author$project$Pages$CTF$Update$savePlayerRequest(m));
-			default:
+			case 15:
 				var result = msg.a;
 				if (result.$ === 1) {
 					var httpError = result.a;
-					var _n8 = 'foo is';
+					var _n10 = 'foo is';
 					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
 				} else {
 					var player = result.a;
-					var _n9 = 'foo is';
+					var _n11 = 'foo is';
 					return _Utils_Tuple2(m, elm$core$Platform$Cmd$none);
+				}
+			default:
+				var _n12 = m.dH;
+				switch (_n12) {
+					case 'none':
+						return _Utils_Tuple2(
+							_Utils_update(
+								m,
+								{dG: 'none', dH: 'block'}),
+							elm$core$Platform$Cmd$none);
+					case 'block':
+						return _Utils_Tuple2(
+							_Utils_update(
+								m,
+								{dG: 'block', dH: 'none'}),
+							elm$core$Platform$Cmd$none);
+					default:
+						return _Utils_Tuple2(
+							_Utils_update(
+								m,
+								{dG: 'block', dH: 'none'}),
+							elm$core$Platform$Cmd$none);
 				}
 		}
 	});
-var author$project$Pages$CTF$Update$SendPlayer = {$: 12};
+var author$project$Pages$CTF$Update$ChangeRank = {$: 16};
+var author$project$Pages$CTF$Update$SendPlayer = {$: 14};
 var author$project$Pages$CTF$Update$UpdatePlayerAlias = function (a) {
 	return {$: 6, a: a};
 };
@@ -6708,7 +6769,7 @@ var author$project$Pages$CTF$View$sidebarContentTexts = F2(
 					function ($) {
 						return $.dy;
 					},
-					m.dE)));
+					m.dF)));
 	});
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$Attributes$href = function (url) {
@@ -6775,7 +6836,46 @@ var author$project$Pages$CTF$View$sidebarContent = function (m) {
 				function ($) {
 					return $.ds;
 				},
-				m.dE)));
+				m.dF)));
+};
+var elm$html$Html$table = _VirtualDom_node('table');
+var elm$html$Html$td = _VirtualDom_node('td');
+var elm$html$Html$tr = _VirtualDom_node('tr');
+var elm$html$Html$Attributes$align = elm$html$Html$Attributes$stringProperty('align');
+var author$project$Pages$CTF$View$tableRanking = function (m) {
+	return A2(
+		elm$html$Html$table,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('table table-striped'),
+				elm$html$Html$Attributes$align('center')
+			]),
+		A2(
+			elm$core$List$map,
+			function (x) {
+				return A2(
+					elm$html$Html$tr,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$td,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text(x.ch)
+								])),
+							A2(
+							elm$html$Html$td,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text(
+									elm$core$String$fromInt(x.cS))
+								]))
+						]));
+			},
+			m.dC));
 };
 var author$project$Pages$CTF$Update$ExpandFlag = F2(
 	function (a, b) {
@@ -7644,7 +7744,7 @@ var author$project$Pages$CTF$View$cardView = F4(
 								_List_fromArray(
 									[
 										elm$html$Html$text(
-										obj.dJ + (' (' + (elm$core$String$fromInt(obj.dM) + 'pts)')))
+										obj.dM + (' (' + (elm$core$String$fromInt(obj.dP) + 'pts)')))
 									]))
 							]),
 						rundis$elm_bootstrap$Bootstrap$Card$config(
@@ -7665,7 +7765,7 @@ var author$project$Pages$CTF$View$flagTitle = F3(
 				]),
 			_List_fromArray(
 				[
-					elm$html$Html$text(obj.dJ)
+					elm$html$Html$text(obj.dM)
 				]));
 	});
 var author$project$Pages$CTF$View$viewFlag = F5(
@@ -7761,7 +7861,22 @@ var author$project$Pages$CTF$View$view = function (m) {
 									[
 										elm$html$Html$Attributes$class('sidenav')
 									]),
-								author$project$Pages$CTF$View$sidebarContent(m)),
+								A2(
+									elm$core$List$append,
+									author$project$Pages$CTF$View$sidebarContent(m),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$button,
+											_List_fromArray(
+												[
+													elm$html$Html$Events$onClick(author$project$Pages$CTF$Update$ChangeRank)
+												]),
+											_List_fromArray(
+												[
+													elm$html$Html$text('Mostrar rank')
+												]))
+										]))),
 								A2(
 								elm$html$Html$div,
 								_List_fromArray(
@@ -7784,23 +7899,35 @@ var author$project$Pages$CTF$View$view = function (m) {
 								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('flagcontainer')
+										elm$html$Html$Attributes$class('rankcontainer'),
+										A2(elm$html$Html$Attributes$style, 'display', m.dH)
+									]),
+								_List_fromArray(
+									[
+										author$project$Pages$CTF$View$tableRanking(m)
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('flagcontainer'),
+										A2(elm$html$Html$Attributes$style, 'display', m.dG)
 									]),
 								_List_fromArray(
 									[
 										A2(
 										author$project$Pages$CTF$View$rowMap,
-										A3(author$project$Pages$CTF$View$viewFlag, m, m.dC, m.df.cs),
+										A3(author$project$Pages$CTF$View$viewFlag, m, m.dD, m.df.cs),
 										m.df.dm)
 									]))
 							]))
 					]))
 			]),
-		dJ: 'Capture The Flag'
+		dM: 'Capture The Flag'
 	};
 };
 var elm$browser$Browser$application = _Browser_application;
 var author$project$Pages$CTF$Main$main = elm$browser$Browser$application(
-	{du: author$project$Pages$CTF$Update$init, dz: author$project$Pages$CTF$Update$UrlChanged, dA: author$project$Pages$CTF$Update$LinkClicked, dH: author$project$Pages$CTF$Subscription$subscriptions, dK: author$project$Pages$CTF$Update$update, dN: author$project$Pages$CTF$View$view});
+	{du: author$project$Pages$CTF$Update$init, dz: author$project$Pages$CTF$Update$UrlChanged, dA: author$project$Pages$CTF$Update$LinkClicked, dK: author$project$Pages$CTF$Subscription$subscriptions, dN: author$project$Pages$CTF$Update$update, dQ: author$project$Pages$CTF$View$view});
 _Platform_export({'Pages':{'CTF':{'Main':{'init':author$project$Pages$CTF$Main$main(
 	elm$json$Json$Decode$succeed(0))(0)}}}});}(this));
