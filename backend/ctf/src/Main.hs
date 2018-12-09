@@ -17,6 +17,7 @@ import Database.HDBC.Sqlite3 (connectSqlite3)
 import Database.HDBC
 import Database.SQLite.Simple
 import Database.SQLite.Simple.FromRow
+import Control.Monad.IO.Class
 
 instance ToJSON Flag
 instance FromJSON Flag
@@ -61,7 +62,15 @@ instance FromRow SectionDB where
 
 instance FromRow Player where
   fromRow = Player <$> field <*> field
-  
+
+insertPlayer p = do
+  conn <- connectSqlite3 "ctf.db"
+  let point = points p
+  let name = aliasPlayer p
+  stmt <- prepare conn "INSERT INTO player VALUES(?, ?)"
+  Database.HDBC.execute stmt [toSql $ show name, toSql $ toInteger point]
+  commit conn
+  disconnect conn
 
 getFirstFlag :: IO ()
 getFirstFlag = do
@@ -147,4 +156,6 @@ main = do
     post "/ranking" $ do
       -- addHeader "Access-Control-Allow-Origin" "http://localhost:8000"
       player <- jsonData :: ActionM Player
+      
+      liftIO $  insertPlayer (Player (aliasPlayer player) (points player))
       json player
