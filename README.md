@@ -1,6 +1,10 @@
 # CTF
 CTF
 
+Nome | Matrícula
+:-------: | ------:
+Harrison Pedro     | 14/0142801
+Gustavo Lopes    | 14/0142657
 
 ## Para compilar o front-end
 
