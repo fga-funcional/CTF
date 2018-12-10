@@ -30,7 +30,7 @@ matchesFlagId id flag = idFlag flag == id
 main = do
   putStrLn "Starting Server..."
   secs <- getAllSections
-  players <- getPlayers
+  
   scotty 3000 $ do
     middleware simpleCors
     
@@ -38,6 +38,7 @@ main = do
       json secs
     
     get "/ranking" $ do
+      players <- liftIO $ getPlayers
       json players
 
     get "/sections/:id" $ do

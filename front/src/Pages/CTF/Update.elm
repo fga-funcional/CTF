@@ -161,7 +161,7 @@ update msg m =
                         _ =
                             "foo is"
                     in
-                        ( m, Cmd.none )
+                        ( m, Http.send GotRanking getRanking  )
         ChangeRank ->   
             case m.showRank of
                 "none" -> 
