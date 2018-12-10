@@ -35,7 +35,7 @@ updateFlagAlert obj =
             ]
         |> Alert.view obj.alert
 
-
+displayPlaceholder : Flag -> String -> String
 displayPlaceholder f response =
     if f.captured then
         f.answer
@@ -43,7 +43,7 @@ displayPlaceholder f response =
     else
         "Type an answer"
 
-
+cardView : Model -> String -> Int -> Flag -> List (Html Msg)
 cardView m response i obj =
     [ Card.config
         [ if obj.captured then
@@ -77,7 +77,7 @@ cardView m response i obj =
 --         ]
 --     ]
 
-
+rowMap : (Int -> a -> Html msg) -> List a -> Html msg
 rowMap =
     htmlIndexedMap div p
 
@@ -85,6 +85,7 @@ sidebarContent : Model -> List (Html Msg)
 sidebarContent m =
     List.map (\y -> p [] [ a [ href "#", onClick (GetOneSectionAPI <| Maybe.withDefault 99999999 <| String.toInt y) ] [ text (sidebarContentTexts m (Maybe.withDefault 999999 <| String.toInt y)) ] ]) <| List.map String.fromInt <| List.map .idSection m.sections
 
+sidebarContentTexts : Model -> Int -> String
 sidebarContentTexts m id =  Maybe.withDefault "" <| getElem id  <| List.map .name m.sections
 
 -- flagRows : Model -> List (Html Msg)
@@ -118,12 +119,13 @@ view m =
     }
 
 
-
+tableRanking : Model -> Html msg
 tableRanking m = 
     table [ class "table table-striped", align "center"]
             (List.map (\x -> tr [] [td [] [text x.alias],
                 td[] [text <| String.fromInt x.score] ]) m.ranking)
-            
+
+formPlayer : Model -> Html Msg         
 formPlayer m = div [ class "row" ]
                     [ Html.form
                         [ onSubmit SendPlayer
@@ -201,13 +203,13 @@ acc : Model -> Int
 acc m =
     Maybe.withDefault 0 (getElem (m.curr_section.expanded + 1) (List.map .value m.curr_section.flags))
 
-
+flagTitle : Model -> Int -> Flag -> Html Msg
 flagTitle m i obj =
     h2 [ onClick (ExpandFlag m.curr_section i) ]
         [ text obj.title
         ]
 
-
+flagChildren : Model -> String -> Int -> Flag -> List (Html Msg)
 flagChildren m response i obj =
     [ p [] [ text obj.description ]
     , div []
