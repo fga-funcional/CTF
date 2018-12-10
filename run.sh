@@ -3,6 +3,7 @@ cd backend/ctf/
 echo "main" | stack ghci --no-package-hiding &
 
 cd ../../front/
+bash script.sh &
 elm reactor &
 
 cd ..
